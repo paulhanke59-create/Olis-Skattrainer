@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Skattrainer</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Georgia', serif;
+  background: radial-gradient(ellipse at 50% 0%, #1a4a1a 0%, #0d2b0d 50%, #060f06 100%);
+  min-height: 100vh;
+  color: #e8dcc0;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* ── LEVEL SCREEN ── */
+#level-screen {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, #1a4a1a 0%, #0d2b0d 50%, #060f06 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 30px 24px; z-index: 999; text-align: center;
+}
+#level-screen.hidden { display: none; }
+#level-logo { font-size: 56px; margin-bottom: 16px; }
+#level-title { font-size: 32px; color: #d4a83c; font-style: italic; margin-bottom: 6px; letter-spacing: 2px; }
+#level-sub { font-size: 11px; color: #5a7a50; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; }
+.level-btn {
+  width: 100%; padding: 18px; border-radius: 14px; border: 1px solid rgba(212,168,60,0.3);
+  background: rgba(212,168,60,0.08); color: #e8dcc0; font-size: 16px; font-family: Georgia, serif;
+  cursor: pointer; margin-bottom: 12px; text-align: left; transition: background 0.2s;
+}
+.level-btn:active { background: rgba(212,168,60,0.2); }
+.level-btn .level-name { color: #d4a83c; font-weight: bold; display: block; margin-bottom: 4px; }
+.level-btn .level-desc { font-size: 12px; color: #7a9a70; line-height: 1.5; }
+
+/* ── HEADER ── */
+#header {
+  background: rgba(6,15,6,0.95); border-bottom: 1px solid rgba(212,168,60,0.2);
+  padding: 10px 14px; position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; gap: 10px;
+}
+#header-logo { font-size: 22px; }
+#header-title { font-style: italic; font-size: 18px; color: #d4a83c; flex: 1; }
+#header-level { font-size: 10px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; }
+.hbtn { background: rgba(212,168,60,0.1); border: 1px solid rgba(212,168,60,0.25); border-radius: 8px; padding: 5px 10px; color: #d4a83c; font-size: 12px; cursor: pointer; font-family: Georgia,serif; }
+
+/* ── SCORE TABLE ── */
+#score-bar {
+  background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(212,168,60,0.15);
+  padding: 8px 14px; display: flex; gap: 8px; justify-content: space-around;
+}
+.score-cell { text-align: center; }
+.score-name { font-size: 10px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; }
+.score-val { font-size: 20px; color: #d4a83c; font-weight: bold; }
+.score-you { color: #7ab87a; }
+
+/* ── GAME TABLE ── */
+#game-area { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* opponent hands */
+.opp-area { display: flex; gap: 4px; justify-content: center; min-height: 52px; align-items: center; }
+.opp-card-back {
+  width: 34px; height: 52px; border-radius: 5px;
+  background: linear-gradient(135deg, #1a4a8a, #0d2b5a);
+  border: 1px solid rgba(100,150,220,0.4);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+
+/* play area */
+#play-area {
+  background: rgba(0,80,0,0.3); border: 1px solid rgba(212,168,60,0.2);
+  border-radius: 16px; padding: 14px; min-height: 120px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+#play-label { font-size: 10px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; text-align: center; }
+#play-cards { display: flex; gap: 8px; justify-content: center; align-items: center; min-height: 72px; }
+#stich-info { text-align: center; font-size: 12px; color: #7a9a70; }
+
+/* skat area */
+#skat-area {
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(212,168,60,0.15);
+  border-radius: 12px; padding: 10px; display: none;
+}
+#skat-area.visible { display: block; }
+#skat-label { font-size: 10px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+#skat-cards { display: flex; gap: 8px; justify-content: center; }
+
+/* cards */
+.card {
+  width: 46px; height: 70px; border-radius: 7px;
+  background: #f5f0e0; border: 1.5px solid #c0a060;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: bold; cursor: pointer; position: relative;
+  transition: transform 0.15s, box-shadow 0.15s; flex-shrink: 0;
+  user-select: none;
+}
+.card:active { transform: translateY(-4px); }
+.card.selected { transform: translateY(-10px); box-shadow: 0 8px 20px rgba(212,168,60,0.6); border-color: #d4a83c; }
+.card.played { opacity: 0.6; cursor: default; }
+.card.red { color: #c02020; }
+.card.black { color: #1a1a1a; }
+.card .rank { font-size: 14px; line-height: 1; }
+.card .suit { font-size: 16px; line-height: 1; }
+.card.back {
+  background: linear-gradient(135deg, #1a4a8a, #0d2b5a);
+  border-color: rgba(100,150,220,0.4); cursor: default; color: #5080c0; font-size: 22px;
+}
+.card.skat-selectable { border-color: #e07040; box-shadow: 0 0 8px rgba(224,112,64,0.5); }
+
+/* player hand */
+#hand-area { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; padding: 4px 0; }
+
+/* reizen */
+#reiz-area {
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2);
+  border-radius: 14px; padding: 14px; display: none;
+}
+#reiz-area.visible { display: block; }
+#reiz-title { font-size: 12px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
+#reiz-text { font-size: 14px; color: #e8dcc0; text-align: center; margin-bottom: 12px; line-height: 1.6; }
+#reiz-btns { display: flex; gap: 8px; justify-content: center; }
+.reiz-btn { padding: 10px 20px; border-radius: 10px; border: 1px solid; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
+#reiz-ja { background: rgba(80,180,80,0.2); border-color: rgba(80,180,80,0.5); color: #80d880; }
+#reiz-nein { background: rgba(220,80,60,0.2); border-color: rgba(220,80,60,0.4); color: #e07060; }
+
+/* game type selection */
+#gametype-area {
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2);
+  border-radius: 14px; padding: 14px; display: none;
+}
+#gametype-area.visible { display: block; }
+#gametype-title { font-size: 12px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; text-align: center; }
+#gametype-skat-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+#gametype-btns { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px; }
+.gt-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.3); background: rgba(212,168,60,0.08); color: #e8dcc0; font-family: Georgia,serif; font-size: 13px; cursor: pointer; }
+.gt-btn.active { background: rgba(212,168,60,0.3); border-color: #d4a83c; color: #d4a83c; }
+#hand-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(100,180,100,0.3); background: rgba(100,180,100,0.08); color: #80d880; font-family: Georgia,serif; font-size: 13px; cursor: pointer; }
+#hand-btn.active { background: rgba(100,180,100,0.25); }
+#schneider-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(220,160,60,0.3); background: rgba(220,160,60,0.08); color: #e0b860; font-family: Georgia,serif; font-size: 13px; cursor: pointer; }
+#schneider-btn.active { background: rgba(220,160,60,0.25); }
+#schwarz-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(220,80,60,0.3); background: rgba(220,80,60,0.08); color: #e07060; font-family: Georgia,serif; font-size: 13px; cursor: pointer; }
+#schwarz-btn.active { background: rgba(220,80,60,0.25); }
+#confirm-game-btn { width: 100%; padding: 12px; border-radius: 10px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 15px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; margin-top: 6px; }
+
+/* drücken */
+#druecken-area {
+  background: rgba(80,40,0,0.3); border: 1px solid rgba(212,168,60,0.2);
+  border-radius: 14px; padding: 14px; display: none;
+}
+#druecken-area.visible { display: block; }
+#druecken-title { font-size: 12px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
+#druecken-text { font-size: 13px; color: #9aaa80; text-align: center; margin-bottom: 10px; }
+#druecken-btn { width: 100%; padding: 12px; border-radius: 10px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-size: 14px; font-family: Georgia,serif; cursor: pointer; }
+
+/* status */
+#status-area { text-align: center; padding: 6px; }
+#status-text { font-size: 13px; color: #5a7a50; letter-spacing: 1px; }
+#game-info { font-size: 11px; color: #3a5a30; margin-top: 3px; }
+
+/* trainer box */
+#trainer-box {
+  background: rgba(20,60,20,0.5); border: 1px solid rgba(100,180,80,0.3);
+  border-radius: 14px; padding: 12px 14px; display: none;
+}
+#trainer-box.visible { display: block; }
+#trainer-label { font-size: 10px; color: #60a050; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+#trainer-text { font-size: 13px; color: #b0d8a0; line-height: 1.7; }
+
+/* round result */
+#round-result {
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(212,168,60,0.3);
+  border-radius: 14px; padding: 16px; display: none; text-align: center;
+}
+#round-result.visible { display: block; }
+#result-title { font-size: 16px; color: #d4a83c; margin-bottom: 10px; }
+#result-text { font-size: 13px; color: #b0b890; line-height: 1.8; margin-bottom: 14px; }
+#result-btn { padding: 12px 30px; border-radius: 10px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 15px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
+
+/* action button */
+#action-btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: linear-gradient(135deg,#2a6a2a,#1a4a1a); border: 1px solid rgba(80,160,80,0.4);
+  color: #80d880; font-size: 15px; font-family: Georgia,serif; cursor: pointer; display: none;
+}
+#action-btn.visible { display: block; }
+
+/* ── SCROLLABLE MAIN ── */
+#main { padding: 10px 14px 40px; display: flex; flex-direction: column; gap: 10px; }
+
+.player-label {
+  font-size: 10px; color: #5a7a50; letter-spacing: 2px;
+  text-transform: uppercase; text-align: center; margin-bottom: 2px;
+}
+.dealer-star { color: #d4a83c; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- LEVEL SELECT -->
+<div id="level-screen">
+  <div id="level-logo">🃏</div>
+  <div id="level-title">Skattrainer</div>
+  <div id="level-sub">Dein persönlicher Skat-Coach</div>
+  <button class="level-btn" onclick="setLevel('anfaenger')">
+    <span class="level-name">🌱 Anfänger</span>
+    <span class="level-desc">Ich kenne die Grundregeln. Der Trainer erklärt alles ausführlich und gibt viele Tipps.</span>
+  </button>
+  <button class="level-btn" onclick="setLevel('fortgeschritten')">
+    <span class="level-name">⚡ Fortgeschrittener</span>
+    <span class="level-desc">Ich spiele regelmäßig. Der Trainer kommentiert taktische Entscheidungen.</span>
+  </button>
+  <button class="level-btn" onclick="setLevel('experte')">
+    <span class="level-name">🏆 Experte</span>
+    <span class="level-desc">Ich kenne alle Feinheiten. Der Trainer analysiert Spielstärke und Fehler präzise.</span>
+  </button>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="header-logo">🃏</div>
+  <div>
+    <div id="header-title">Skattrainer</div>
+    <div id="header-level">Anfänger</div>
+  </div>
+  <button class="hbtn" id="new-game-btn">Neu</button>
+  <button class="hbtn" id="level-btn">Level</button>
+</div>
+
+<!-- SCORE BAR -->
+<div id="score-bar">
+  <div class="score-cell">
+    <div class="score-name">Vorhand</div>
+    <div class="score-val" id="sc-vorhand">0</div>
+  </div>
+  <div class="score-cell">
+    <div class="score-name">Mittelhand</div>
+    <div class="score-val" id="sc-mittelhand">0</div>
+  </div>
+  <div class="score-cell">
+    <div class="score-name score-you">Du</div>
+    <div class="score-val score-you" id="sc-du">0</div>
+  </div>
+</div>
+
+<div id="main">
+  <!-- Opponent 1 (Vorhand) -->
+  <div>
+    <div class="player-label">Vorhand <span class="dealer-star" id="dealer-v">★</span></div>
+    <div class="opp-area" id="opp1-hand"></div>
+  </div>
+
+  <!-- Opponent 2 (Mittelhand) -->
+  <div>
+    <div class="player-label">Mittelhand <span class="dealer-star" id="dealer-m"></span></div>
+    <div class="opp-area" id="opp2-hand"></div>
+  </div>
+
+  <!-- Skat -->
+  <div id="skat-area">
+    <div id="skat-label">Skat</div>
+    <div id="skat-cards"></div>
+  </div>
+
+  <!-- Play area -->
+  <div id="play-area">
+    <div id="play-label">Tisch</div>
+    <div id="play-cards"></div>
+    <div id="stich-info"></div>
+  </div>
+
+  <!-- Status -->
+  <div id="status-area">
+    <div id="status-text">Neue Runde starten</div>
+    <div id="game-info"></div>
+  </div>
+
+  <!-- Reizen -->
+  <div id="reiz-area">
+    <div id="reiz-title">🎯 Reizen</div>
+    <div id="reiz-text"></div>
+    <div id="reiz-btns">
+      <button class="reiz-btn" id="reiz-ja">✓ Halte</button>
+      <button class="reiz-btn" id="reiz-nein">✗ Passe</button>
+    </div>
+  </div>
+
+  <!-- Game type -->
+  <div id="gametype-area">
+    <div id="gametype-title">🃏 Spiel ansagen</div>
+    <div id="gametype-skat-row" id="skat-aufnahme-row">
+      <button id="skat-aufnehmen-btn" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(212,168,60,0.4);background:rgba(212,168,60,0.15);color:#d4a83c;font-family:Georgia,serif;font-size:13px;cursor:pointer">Skat aufnehmen</button>
+      <button id="hand-btn">Hand spielen</button>
+    </div>
+    <div id="gametype-btns">
+      <button class="gt-btn" data-game="kreuz">♣ Kreuz</button>
+      <button class="gt-btn" data-game="pik">♠ Pik</button>
+      <button class="gt-btn" data-game="herz">♥ Herz</button>
+      <button class="gt-btn" data-game="karo">♦ Karo</button>
+      <button class="gt-btn" data-game="grand">Grand</button>
+      <button class="gt-btn" data-game="null">Null</button>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;flex-wrap:wrap">
+      <button id="schneider-btn">Schneider angesagt</button>
+      <button id="schwarz-btn">Schwarz angesagt</button>
+    </div>
+    <button id="confirm-game-btn">Spiel bestätigen</button>
+  </div>
+
+  <!-- Drücken -->
+  <div id="druecken-area">
+    <div id="druecken-title">♻ Karten drücken</div>
+    <div id="druecken-text">Wähle 2 Karten aus deiner Hand zum Drücken</div>
+    <button id="druecken-btn">Ausgewählte Karten drücken</button>
+  </div>
+
+  <!-- Trainer -->
+  <div id="trainer-box">
+    <div id="trainer-label">🎓 Trainer-Kommentar</div>
+    <div id="trainer-text"></div>
+  </div>
+
+  <!-- Round result -->
+  <div id="round-result">
+    <div id="result-title"></div>
+    <div id="result-text"></div>
+    <button id="result-btn" onclick="nextRound()">Nächste Runde ▶</button>
+  </div>
+
+  <!-- Action button -->
+  <button id="action-btn"></button>
+
+  <!-- Player hand -->
+  <div>
+    <div class="player-label">Deine Hand <span class="dealer-star" id="dealer-h"></span></div>
+    <div id="hand-area"></div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────────────────────
+// CONSTANTS
+// ──────────────────────────────────────────────────────────────
+var SUITS = ['kreuz','pik','herz','karo'];
+var RANKS = ['7','8','9','10','B','D','K','A'];
+var SUIT_SYMBOLS = { kreuz:'♣', pik:'♠', herz:'♥', karo:'♦' };
+var SUIT_COLORS  = { kreuz:'black', pik:'black', herz:'red', karo:'red' };
+
+// Card points
+var CARD_POINTS = { '7':0,'8':0,'9':0,'10':10,'B':2,'D':3,'K':4,'A':11 };
+
+// Jack order: kreuz > pik > herz > karo
+var JACK_ORDER = ['kreuz','pik','herz','karo'];
+
+// Reiz values
+var REIZ_VALUES = [18,20,22,23,24,27,30,33,35,36,40,44,45,46,48,50,54,55,59,60,63,66,70,72,77,80,81,84,88,90,96,99,100,108,110,117,120,121,126,130,132,135,140,143,144,150,154,165,168,176,180,187,192,198,204,216,240,264];
+
+// Base values
+var BASE_VALUES = { kreuz:12, pik:11, herz:10, karo:9, grand:24, null:23 };
+
+// ──────────────────────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────────────────────
+var level = 'anfaenger';
+var scores = { vorhand:0, mittelhand:0, du:0 };
+var dealerIdx = 0; // 0=vorhand, 1=mittelhand, 2=du
+var hands = { vorhand:[], mittelhand:[], du:[] };
+var skat = [];
+var currentGame = null; // { type, hand, schneider, schwarz }
+var declarer = null; // 'vorhand','mittelhand','du'
+var currentTrick = []; // [{player, card}]
+var tricks = { vorhand:[], mittelhand:[], du:[] }; // won tricks
+var trickPoints = { vorhand:0, mittelhand:0, du:0 };
+var currentPlayer = null;
+var phase = 'idle'; // idle, reizen, gametype, druecken, playing, result
+var reizValue = 0;
+var reizStep = 0;
+var reizPassed = { vorhand:false, mittelhand:false, du:false };
+var handSpiel = false;
+var selectedCards = [];
+var drueckenCards = [];
+var skatTaken = false;
+var schneiderAngesagt = false;
+var schwarzAngesagt = false;
+var chosenGameType = null;
+var trainComments = [];
+
+// ──────────────────────────────────────────────────────────────
+// DOM REFS
+// ──────────────────────────────────────────────────────────────
+var $  = function(id){ return document.getElementById(id); };
+
+// ──────────────────────────────────────────────────────────────
+// CARD HELPERS
+// ──────────────────────────────────────────────────────────────
+function makeCard(rank, suit) {
+  return { rank:rank, suit:suit, id: rank+'_'+suit };
+}
+
+function cardDisplay(card) {
+  if (!card) return '';
+  var sym = SUIT_SYMBOLS[card.suit] || card.suit;
+  return card.rank + sym;
+}
+
+function cardPoints(card) {
+  return CARD_POINTS[card.rank] || 0;
+}
+
+function isJack(card) { return card.rank === 'B'; }
+
+function isTrump(card, gameType) {
+  if (gameType === 'null') return false;
+  if (isJack(card)) return true;
+  if (gameType === 'grand') return false;
+  return card.suit === gameType;
+}
+
+// Trump order for a suit game: J♣ J♠ J♥ J♦ then 7..A of trump suit
+function trumpRank(card, gameType) {
+  if (gameType === 'null') return -1;
+  if (isJack(card)) {
+    return 100 + (3 - JACK_ORDER.indexOf(card.suit));
+  }
+  if (gameType === 'grand') return -1;
+  if (card.suit === gameType) {
+    var order = ['7','8','9','Q','K','10','A'];
+    return order.indexOf(card.rank);
+  }
+  return -1;
+}
+
+function cardSortValue(card, gameType) {
+  // For display sorting in hand
+  var t = trumpRank(card, gameType || 'grand');
+  if (t >= 0) return 1000 + t;
+  var si = SUITS.indexOf(card.suit);
+  var ri = ['7','8','9','10','B','D','K','A'].indexOf(card.rank);
+  return si * 10 + ri;
+}
+
+function sortHand(hand, gameType) {
+  return hand.slice().sort(function(a,b){ return cardSortValue(b,gameType) - cardSortValue(a,gameType); });
+}
+
+// ──────────────────────────────────────────────────────────────
+// DECK
+// ──────────────────────────────────────────────────────────────
+function createDeck() {
+  var deck = [];
+  SUITS.forEach(function(s){ RANKS.forEach(function(r){ deck.push(makeCard(r,s)); }); });
+  return deck;
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function deal() {
+  var deck = shuffle(createDeck());
+  // 3-4-3 deal pattern each player, skat = 2
+  hands.vorhand    = deck.slice(0,10);
+  hands.mittelhand = deck.slice(10,20);
+  hands.du         = deck.slice(20,30);
+  skat             = deck.slice(30,32);
+}
+
+// ──────────────────────────────────────────────────────────────
+// MATADORS / GAME VALUE
+// ──────────────────────────────────────────────────────────────
+function countMatadors(hand, gameType) {
+  if (gameType === 'null' || gameType === 'grand') return 0;
+  var jacks = ['kreuz','pik','herz','karo'].map(function(s){ return makeCard('B',s); });
+  // check with/without kreuz-bube
+  var hasKreuzBube = hand.some(function(c){ return c.rank==='B' && c.suit==='kreuz'; });
+  var count = 0;
+  var with_ = hasKreuzBube;
+  var jackSeq = ['kreuz','pik','herz','karo'];
+  // if with: count consecutive jacks starting from kreuz
+  // if without: count consecutive missing jacks starting from kreuz
+  if (with_) {
+    for (var i=0;i<jackSeq.length;i++) {
+      var s = jackSeq[i];
+      if (hand.some(function(c){ return c.rank==='B' && c.suit===s; })) count++;
+      else break;
+    }
+  } else {
+    for (var i=0;i<jackSeq.length;i++) {
+      var s = jackSeq[i];
+      if (!hand.some(function(c){ return c.rank==='B' && c.suit===s; })) count++;
+      else break;
+    }
+  }
+  return Math.max(1, count);
+}
+
+function gameValue(gameType, matadors, hand, schneider, schwarz, schneiderAns, schwarzAns) {
+  var base = BASE_VALUES[gameType] || 0;
+  if (gameType === 'null') {
+    if (hand && schneider) return 59;
+    if (hand) return 35;
+    if (schneider) return 46; // ouvert
+    return 23;
+  }
+  var mult = matadors + 1; // spiel
+  if (hand) mult++;
+  if (schneider) mult++;
+  if (schneiderAns) mult++;
+  if (schwarz) mult++;
+  if (schwarzAns) mult++;
+  return base * mult;
+}
+
+// ──────────────────────────────────────────────────────────────
+// CARD RENDER
+// ──────────────────────────────────────────────────────────────
+function renderCardEl(card, opts) {
+  opts = opts || {};
+  var el = document.createElement('div');
+  el.className = 'card';
+  if (opts.back) { el.className += ' back'; el.textContent = '🂠'; return el; }
+  var col = SUIT_COLORS[card.suit] || 'black';
+  el.className += ' ' + col;
+  var r = document.createElement('div'); r.className = 'rank'; r.textContent = card.rank;
+  var s = document.createElement('div'); s.className = 'suit'; s.textContent = SUIT_SYMBOLS[card.suit];
+  el.appendChild(r); el.appendChild(s);
+  if (opts.selected) el.classList.add('selected');
+  if (opts.played) el.classList.add('played');
+  if (opts.selectable) el.classList.add('skat-selectable');
+  return el;
+}
+
+// ──────────────────────────────────────────────────────────────
+// UI RENDERERS
+// ──────────────────────────────────────────────────────────────
+function renderOppHands() {
+  ['vorhand','mittelhand'].forEach(function(p) {
+    var el = $(p === 'vorhand' ? 'opp1-hand' : 'opp2-hand');
+    el.innerHTML = '';
+    var n = hands[p].length;
+    for (var i=0;i<n;i++) {
+      el.appendChild(renderCardEl(null, {back:true}));
+    }
+  });
+}
+
+function renderPlayerHand() {
+  var el = $('hand-area'); el.innerHTML = '';
+  var sorted = sortHand(hands.du, currentGame ? currentGame.type : null);
+  sorted.forEach(function(card) {
+    var isSel = selectedCards.indexOf(card.id) >= 0;
+    var isDrueck = drueckenCards.indexOf(card.id) >= 0;
+    var cardEl = renderCardEl(card, { selected: isSel || isDrueck });
+    cardEl.addEventListener('click', function(){ onCardClick(card); });
+    el.appendChild(cardEl);
+  });
+}
+
+function renderPlayArea() {
+  var el = $('play-cards'); el.innerHTML = '';
+  currentTrick.forEach(function(entry) {
+    var ce = renderCardEl(entry.card);
+    var lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:9px;color:#5a7a50;text-align:center;margin-top:2px;letter-spacing:1px';
+    lbl.textContent = entry.player === 'du' ? 'DU' : entry.player.toUpperCase();
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center';
+    wrap.appendChild(ce); wrap.appendChild(lbl);
+    el.appendChild(wrap);
+  });
+}
+
+function renderSkat() {
+  var el = $('skat-cards'); el.innerHTML = '';
+  skat.forEach(function(card) {
+    el.appendChild(renderCardEl(card, {back: !skatTaken}));
+  });
+}
+
+function renderDealerStars() {
+  $('dealer-v').textContent = dealerIdx===0 ? '★' : '';
+  $('dealer-m').textContent = dealerIdx===1 ? '★' : '';
+  $('dealer-h').textContent = dealerIdx===2 ? '★' : '';
+}
+
+function renderScores() {
+  $('sc-vorhand').textContent = scores.vorhand;
+  $('sc-mittelhand').textContent = scores.mittelhand;
+  $('sc-du').textContent = scores.du;
+}
+
+function setStatus(msg, info) {
+  $('status-text').textContent = msg || '';
+  $('game-info').textContent = info || '';
+}
+
+function showTrainer(msg) {
+  if (!msg) { $('trainer-box').classList.remove('visible'); return; }
+  $('trainer-text').textContent = msg;
+  $('trainer-box').classList.add('visible');
+  trainComments.push(msg);
+}
+
+function hideAll() {
+  ['reiz-area','gametype-area','druecken-area','trainer-box','round-result','action-btn','skat-area'].forEach(function(id){
+    var el = $(id); el.classList.remove('visible'); el.style.display='';
+  });
+  $('action-btn').style.display='none';
+}
+
+// ──────────────────────────────────────────────────────────────
+// REIZEN LOGIC
+// ──────────────────────────────────────────────────────────────
+// Order: Mittelhand bids to Vorhand; winner bids to Hinterhand (du)
+// Simplified: AI computes max bid, player sees current reiz value and says ja/nein
+
+function computeMaxBid(player) {
+  var hand = hands[player];
+  // Find best game
+  var best = 0;
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt) {
+    var mat = countMatadors(hand, gt);
+    var val = BASE_VALUES[gt] * (mat+1);
+    if (val > best) best = val;
+  });
+  // Check null possibility (rough: no 10s or aces in side suits)
+  return best;
+}
+
+var reizPhase = 0; // 0=mittel vs vorhand, 1=winner vs du
+var reizBidder = 'mittelhand';
+var reizResponder = 'vorhand';
+var reizCurrentVal = 0;
+var reizCurrentIdx = 0;
+var maxBids = {};
+
+function startReizen() {
+  phase = 'reizen';
+  maxBids.vorhand = computeMaxBid('vorhand');
+  maxBids.mittelhand = computeMaxBid('mittelhand');
+  maxBids.du = computeMaxBid('du');
+  reizPassed = {vorhand:false, mittelhand:false, du:false};
+  reizPhase = 0;
+  reizBidder = 'mittelhand';
+  reizResponder = 'vorhand';
+  reizCurrentIdx = 0;
+  reizCurrentVal = REIZ_VALUES[0]; // 18
+  trainComments = [];
+
+  // Show player's hand strength hint
+  var hint = getHandStrengthComment(hands.du, maxBids.du);
+  showTrainer(hint);
+
+  doReizStep();
+}
+
+function doReizStep() {
+  // Determine if it's player's turn or AI handles it
+  if (reizPassed.vorhand && reizPassed.mittelhand) {
+    // Player is only one left, they win automatically (or pass)
+    if (reizPassed.du) { noOneReized(); return; }
+    else { playerWinsReiz(); return; }
+  }
+
+  // Phase 0: mittelhand bids to vorhand
+  if (reizPhase === 0) {
+    if (reizBidder === 'mittelhand' && reizResponder === 'vorhand') {
+      // Check if du is involved? No, du is hinterhand
+      // AI mittelhand bids
+      if (reizPassed.mittelhand && reizPassed.vorhand) {
+        // go to phase 1
+        reizPhase = 1; reizBidder = 'du'; reizResponder = reizPassed.mittelhand ? 'vorhand' : 'mittelhand';
+        // Actually: winner of phase0 vs du (hinterhand)
+        var phase0winner = !reizPassed.mittelhand ? 'mittelhand' : 'vorhand';
+        if (reizPassed.mittelhand && reizPassed.vorhand) { phase0winner = null; }
+        reizPhase = 1;
+        reizResponder = phase0winner;
+        if (!phase0winner) { playerWinsReiz(); return; }
+        // du (hinterhand) bids first
+        reizBidder = 'du';
+        doReizStep(); return;
+      }
+
+      var val = REIZ_VALUES[reizCurrentIdx];
+      // Mittelhand willing to bid val?
+      if (!reizPassed.mittelhand && maxBids.mittelhand >= val) {
+        // Mittelhand bids val → vorhand responds
+        if (!reizPassed.vorhand && maxBids.vorhand >= val) {
+          // Vorhand holds → mittelhand bids next
+          reizCurrentIdx++;
+          if (reizCurrentIdx >= REIZ_VALUES.length) { reizPassed.mittelhand = true; doReizStep(); return; }
+          setTimeout(doReizStep, 400); return;
+        } else {
+          // Vorhand passes
+          reizPassed.vorhand = true;
+          reizPhase = 1; reizBidder = 'du'; reizResponder = 'mittelhand';
+          reizCurrentIdx = 0; // reset? No, continue from current
+          doReizStep(); return;
+        }
+      } else {
+        reizPassed.mittelhand = true;
+        // Vorhand can bid against du
+        reizPhase = 1; reizBidder = 'du'; reizResponder = 'vorhand';
+        doReizStep(); return;
+      }
+    }
+  }
+
+  if (reizPhase === 1) {
+    // du bids against phase0 winner (reizResponder)
+    var val = REIZ_VALUES[reizCurrentIdx];
+    if (reizBidder === 'du') {
+      // It's player's turn to bid
+      if (reizPassed.du) {
+        // du passed, responder wins if not passed
+        if (!reizPassed[reizResponder]) { aiWinsReiz(reizResponder); }
+        else { noOneReized(); }
+        return;
+      }
+      // Show player the bid
+      $('reiz-area').classList.add('visible');
+      var respName = reizResponder === 'du' ? 'Du' : reizResponder.charAt(0).toUpperCase()+reizResponder.slice(1);
+      var bidderName = 'Du';
+      $('reiz-text').innerHTML =
+        '<b style="color:#d4a83c">' + respName + '</b> hat ' + (reizCurrentIdx===0?'geboten':reizCurrentVal+' gehalten') + '.<br>' +
+        'Reizt du <b style="color:#d4a83c">' + val + '</b>?';
+      reizCurrentVal = val;
+      setStatus('Reizen: ' + val);
+      return; // wait for player input
+    } else {
+      // AI bids (shouldn't normally happen in this flow)
+      doReizStep(); return;
+    }
+  }
+}
+
+function playerReizJa() {
+  $('reiz-area').classList.remove('visible');
+  reizCurrentVal = REIZ_VALUES[reizCurrentIdx];
+  // Responder (AI) holds or passes
+  var resp = reizResponder;
+  reizCurrentIdx++;
+  if (reizCurrentIdx >= REIZ_VALUES.length || maxBids[resp] < REIZ_VALUES[reizCurrentIdx]) {
+    // Responder passes
+    reizPassed[resp] = true;
+    playerWinsReiz();
+  } else {
+    // Responder holds, player must bid again
+    setTimeout(doReizStep, 300);
+  }
+}
+
+function playerReizNein() {
+  $('reiz-area').classList.remove('visible');
+  reizPassed.du = true;
+  if (!reizPassed[reizResponder]) {
+    aiWinsReiz(reizResponder);
+  } else {
+    noOneReized();
+  }
+}
+
+function playerWinsReiz() {
+  declarer = 'du';
+  showTrainer(getReizWinComment(reizCurrentVal, 'du'));
+  startGameType();
+}
+
+function aiWinsReiz(player) {
+  declarer = player;
+  setStatus(player.charAt(0).toUpperCase()+player.slice(1) + ' spielt! Reizwert: ' + reizCurrentVal);
+  showTrainer('📢 ' + (player==='vorhand'?'Vorhand':'Mittelhand') + ' hat das Spiel gewonnen (Reizwert: ' + reizCurrentVal + '). Du spielst als Gegenpartei.');
+  // AI picks up skat and chooses game
+  setTimeout(function(){ aiChoosesGame(player); }, 800);
+}
+
+function noOneReized() {
+  // Ramsch or dealer must play (simplified: new deal)
+  setStatus('Alle gepasst – Ramsch! Neue Karten...');
+  showTrainer('🔄 Alle Spieler haben gepasst. In diesem Spiel gibt es Ramsch (alle spielen auf sich selbst). Neue Runde...');
+  setTimeout(nextRound, 2000);
+}
+
+// ──────────────────────────────────────────────────────────────
+// GAME TYPE SELECTION (player)
+// ──────────────────────────────────────────────────────────────
+function startGameType() {
+  phase = 'gametype';
+  skatTaken = false;
+  chosenGameType = null;
+  schneiderAngesagt = false;
+  schwarzAngesagt = false;
+  handSpiel = false;
+  $('gametype-area').classList.add('visible');
+  $('skat-area').classList.add('visible');
+  renderSkat();
+  renderPlayerHand();
+  setStatus('Du bist Alleinspieler! Wähle dein Spiel.');
+
+  // Reset buttons
+  document.querySelectorAll('.gt-btn').forEach(function(b){ b.classList.remove('active'); });
+  $('hand-btn').classList.remove('active');
+  $('schneider-btn').classList.remove('active');
+  $('schwarz-btn').classList.remove('active');
+  $('skat-aufnehmen-btn').style.display = '';
+  $('schneider-btn').style.display = '';
+  $('schwarz-btn').style.display = '';
+
+  showTrainer(getGameTypeHint(hands.du, skat));
+}
+
+$('skat-aufnehmen-btn').addEventListener('click', function(){
+  if (skatTaken) return;
+  skatTaken = true;
+  // Add skat to player's hand
+  hands.du = hands.du.concat(skat);
+  skat = [];
+  // Now player can choose 2 cards to drücken
+  drueckenCards = [];
+  phase = 'druecken';
+  $('gametype-area').classList.remove('visible');
+  $('druecken-area').classList.add('visible');
+  $('skat-area').classList.remove('visible');
+  renderPlayerHand();
+  setStatus('Wähle 2 Karten zum Drücken');
+  showTrainer(getDrueckenHint(hands.du));
+});
+
+$('hand-btn').addEventListener('click', function(){
+  handSpiel = !handSpiel;
+  $('hand-btn').classList.toggle('active', handSpiel);
+  if (handSpiel) {
+    skatTaken = false;
+    $('skat-aufnehmen-btn').style.display='none';
+    showTrainer('🤝 Hand-Spiel: Du spielst ohne Skat aufzunehmen. Dein Spiel wird höher bewertet!');
+  } else {
+    $('skat-aufnehmen-btn').style.display='';
+  }
+});
+
+$('schneider-btn').addEventListener('click', function(){
+  schneiderAngesagt = !schneiderAngesagt;
+  $('schneider-btn').classList.toggle('active', schneiderAngesagt);
+});
+
+$('schwarz-btn').addEventListener('click', function(){
+  schwarzAngesagt = !schwarzAngesagt;
+  $('schwarz-btn').classList.toggle('active', schwarzAngesagt);
+});
+
+document.querySelectorAll('.gt-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.gt-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    chosenGameType = btn.dataset.game;
+    renderPlayerHand(); // re-sort
+  });
+});
+
+$('confirm-game-btn').addEventListener('click', function(){
+  if (!chosenGameType) { showTrainer('⚠️ Bitte wähle zuerst ein Spiel aus!'); return; }
+  if (phase === 'druecken') { showTrainer('⚠️ Du musst erst 2 Karten drücken!'); return; }
+  currentGame = { type: chosenGameType, hand: handSpiel, schneider: schneiderAngesagt, schwarz: schwarzAngesagt };
+  $('gametype-area').classList.remove('visible');
+  $('skat-area').classList.remove('visible');
+  startPlaying();
+});
+
+$('druecken-btn').addEventListener('click', function(){
+  if (drueckenCards.length !== 2) { showTrainer('⚠️ Genau 2 Karten auswählen!'); return; }
+  // Remove selected cards from hand, put to skat
+  var removed = [];
+  hands.du = hands.du.filter(function(c){
+    if (drueckenCards.indexOf(c.id) >= 0) { removed.push(c); return false; }
+    return true;
+  });
+  skat = removed;
+  drueckenCards = [];
+  phase = 'gametype';
+  $('druecken-area').classList.remove('visible');
+  $('gametype-area').classList.add('visible');
+  renderPlayerHand();
+  showTrainer('✅ Karten gedrückt! Wähle jetzt dein Spieltyp und bestätige.');
+});
+
+// ──────────────────────────────────────────────────────────────
+// AI GAME CHOICE
+// ──────────────────────────────────────────────────────────────
+function aiChoosesGame(player) {
+  // Simple AI: pick best suit or grand
+  var hand = hands[player].concat(skat);
+  var best = 'kreuz'; var bestVal = 0;
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
+    var mat = countMatadors(hand, gt);
+    var v = BASE_VALUES[gt]*(mat+1);
+    if (v > bestVal) { bestVal = v; best = gt; }
+  });
+  // AI takes skat silently, presses 2 lowest cards
+  var allCards = hand.slice().sort(function(a,b){ return cardPoints(a)-cardPoints(b); });
+  var pressed = allCards.slice(0,2);
+  hands[player] = allCards.slice(2);
+  skat = pressed;
+  currentGame = { type: best, hand: false, schneider: false, schwarz: false };
+  setStatus((player==='vorhand'?'Vorhand':'Mittelhand') + ' spielt ' + getGameName(best));
+  startPlaying();
+}
+
+// ──────────────────────────────────────────────────────────────
+// PLAYING
+// ──────────────────────────────────────────────────────────────
+function startPlaying() {
+  phase = 'playing';
+  tricks = {vorhand:[],mittelhand:[],du:[]};
+  trickPoints = {vorhand:0,mittelhand:0,du:0};
+  currentTrick = [];
+  $('druecken-area').classList.remove('visible');
+  $('gametype-area').classList.remove('visible');
+  $('skat-area').classList.remove('visible');
+
+  // Vorhand leads (player left of dealer)
+  // Dealer: dealerIdx 0=vorhand,1=mittelhand,2=du
+  // Vorhand = left of dealer
+  var order = ['vorhand','mittelhand','du'];
+  var vhIdx = (dealerIdx + 1) % 3; // actually in skat: dealer=hinterhand, vorhand=left of dealer
+  // Standard: vorhand always leads first trick
+  currentPlayer = 'vorhand';
+
+  renderAll();
+  setStatus('Spiel: ' + getGameName(currentGame.type), declarer === 'du' ? 'Du spielst allein!' : (declarer.charAt(0).toUpperCase()+declarer.slice(1)) + ' spielt allein');
+  showTrainer(getPlayStartComment());
+
+  if (currentPlayer !== 'du') {
+    setTimeout(aiPlay, 800);
+  } else {
+    setStatus('Du bist dran – wähle eine Karte');
+  }
+}
+
+function getNextPlayer(p) {
+  var order = ['vorhand','mittelhand','du'];
+  return order[(order.indexOf(p)+1)%3];
+}
+
+function onCardClick(card) {
+  if (currentPlayer !== 'du') return;
+  if (phase === 'druecken') {
+    // Toggle selection for drücken
+    var idx = drueckenCards.indexOf(card.id);
+    if (idx >= 0) drueckenCards.splice(idx,1);
+    else if (drueckenCards.length < 2) drueckenCards.push(card.id);
+    renderPlayerHand(); return;
+  }
+  if (phase !== 'playing') return;
+  if (!isLegalPlay(card, hands.du, currentTrick, currentGame.type)) {
+    var msg = getLegalPlayHint(card, hands.du, currentTrick, currentGame.type);
+    showTrainer('⚠️ ' + msg); return;
+  }
+  playCard('du', card);
+}
+
+function isLegalPlay(card, hand, trick, gameType) {
+  if (trick.length === 0) return true; // leading
+  var ledCard = trick[0].card;
+  var ledTrump = isTrump(ledCard, gameType);
+  var myTrumps = hand.filter(function(c){ return isTrump(c,gameType); });
+  var mySuit = hand.filter(function(c){ return !isTrump(c,gameType) && c.suit===ledCard.suit; });
+
+  if (ledTrump) {
+    if (myTrumps.length > 0) return isTrump(card, gameType);
+    return true;
+  } else {
+    if (mySuit.length > 0) return !isTrump(card,gameType) && card.suit === ledCard.suit;
+    return true;
+  }
+}
+
+function getLegalPlayHint(card, hand, trick, gameType) {
+  if (trick.length === 0) return '';
+  var ledCard = trick[0].card;
+  var ledTrump = isTrump(ledCard, gameType);
+  if (ledTrump) return 'Du musst Trumpf bedienen, da Trumpf ausgespielt wurde!';
+  return 'Du musst die Farbe ' + SUIT_SYMBOLS[ledCard.suit] + ' bedienen!';
+}
+
+function playCard(player, card) {
+  // Remove from hand
+  hands[player] = hands[player].filter(function(c){ return c.id !== card.id; });
+  currentTrick.push({player:player, card:card});
+
+  // Trainer comment for player's card
+  if (player === 'du') {
+    var comment = getCardPlayComment(card, currentTrick, hands.du, currentGame.type, declarer);
+    showTrainer(comment);
+  }
+
+  renderAll();
+
+  if (currentTrick.length === 3) {
+    setTimeout(resolveTrick, 900);
+  } else {
+    currentPlayer = getNextPlayer(player);
+    if (currentPlayer !== 'du') setTimeout(aiPlay, 600);
+    else setStatus('Du bist dran!');
+  }
+}
+
+function aiPlay() {
+  if (phase !== 'playing') return;
+  var hand = hands[currentPlayer];
+  if (hand.length === 0) return;
+  var legal = hand.filter(function(c){ return isLegalPlay(c, hand, currentTrick, currentGame.type); });
+  if (legal.length === 0) legal = hand;
+  // Simple AI: play highest trump if can win, else lowest card
+  var card = aiChooseCard(currentPlayer, legal, currentTrick, currentGame.type);
+  playCard(currentPlayer, card);
+}
+
+function aiChooseCard(player, legal, trick, gameType) {
+  var isDecl = player === declarer;
+  if (trick.length === 0) {
+    // Lead: declarer leads highest trump, defender leads lowest
+    if (isDecl) {
+      var trumps = legal.filter(function(c){ return isTrump(c,gameType); });
+      if (trumps.length) return trumps.sort(function(a,b){ return trumpRank(b,gameType)-trumpRank(a,gameType); })[0];
+    }
+    return legal.sort(function(a,b){ return cardPoints(a)-cardPoints(b); })[0];
+  }
+  // Try to win trick
+  var winner = getTrickWinner(trick, gameType);
+  var winnerIsTeam = (isDecl === (winner.player === declarer));
+  if (winnerIsTeam) {
+    // Teammate winning: dump high value if defender, or low if declarer
+    if (!isDecl) {
+      var high = legal.sort(function(a,b){ return cardPoints(b)-cardPoints(a); })[0];
+      return high;
+    }
+    return legal.sort(function(a,b){ return cardPoints(a)-cardPoints(b); })[0];
+  }
+  // Try to beat current winner
+  var ledCard = trick[0].card;
+  var canBeat = legal.filter(function(c){ return beats(c, winner.card, gameType); });
+  if (canBeat.length) {
+    // Play lowest winning card
+    return canBeat.sort(function(a,b){ return trumpRank(a,gameType)-trumpRank(b,gameType) || cardPoints(a)-cardPoints(b); })[0];
+  }
+  // Can't win, dump lowest
+  return legal.sort(function(a,b){ return cardPoints(a)-cardPoints(b); })[0];
+}
+
+function beats(card, other, gameType) {
+  var ct = isTrump(card, gameType);
+  var ot = isTrump(other, gameType);
+  if (ct && !ot) return true;
+  if (!ct && ot) return false;
+  if (ct && ot) return trumpRank(card,gameType) > trumpRank(other,gameType);
+  // same suit
+  if (card.suit !== other.suit) return false;
+  var order = ['7','8','9','10','B','D','K','A'];
+  return order.indexOf(card.rank) > order.indexOf(other.rank);
+}
+
+function getTrickWinner(trick, gameType) {
+  var winner = trick[0];
+  for (var i=1;i<trick.length;i++) {
+    if (beats(trick[i].card, winner.card, gameType)) winner = trick[i];
+  }
+  return winner;
+}
+
+function resolveTrick() {
+  var winner = getTrickWinner(currentTrick, currentGame.type);
+  tricks[winner.player] = tricks[winner.player].concat(currentTrick.map(function(e){return e.card;}));
+  var pts = currentTrick.reduce(function(s,e){return s+cardPoints(e.card);},0);
+  trickPoints[winner.player] += pts;
+  $('stich-info').textContent = (winner.player==='du'?'Du gewinnst':winner.player.charAt(0).toUpperCase()+winner.player.slice(1)+' gewinnt') + ' den Stich! (+' + pts + ' Pkt)';
+
+  currentTrick = [];
+  currentPlayer = winner.player;
+
+  if (hands.vorhand.length === 0 && hands.mittelhand.length === 0 && hands.du.length === 0) {
+    setTimeout(endRound, 800);
+    return;
+  }
+
+  setTimeout(function(){
+    $('stich-info').textContent = '';
+    renderAll();
+    if (currentPlayer !== 'du') setTimeout(aiPlay, 600);
+    else setStatus('Du bist dran!');
+  }, 800);
+}
+
+// ──────────────────────────────────────────────────────────────
+// END ROUND
+// ──────────────────────────────────────────────────────────────
+function endRound() {
+  phase = 'result';
+  // Add skat points to declarer
+  var skatPts = skat.reduce(function(s,c){return s+cardPoints(c);},0);
+  trickPoints[declarer] += skatPts;
+
+  var declarerPts = trickPoints[declarer];
+  var opponentPts = 120 - declarerPts;
+  var won = false;
+  var schneider = false;
+  var schwarz = false;
+
+  if (currentGame.type === 'null') {
+    // Null: win if declarer took 0 tricks
+    won = tricks[declarer].length === 0;
+  } else {
+    won = declarerPts >= 61;
+    schneider = declarerPts >= 90 || opponentPts >= 90;
+    schwarz = declarerPts === 120 || opponentPts === 120;
+  }
+
+  // Calculate score
+  var allHands = hands.vorhand.concat(hands.mittelhand).concat(hands.du);
+  var mat = countMatadors(hands[declarer].concat(skat), currentGame.type);
+  var gVal = gameValue(currentGame.type, mat, currentGame.hand, schneider && won, schwarz && won, currentGame.schneider, currentGame.schwarz);
+
+  // Check if bid was met
+  var bidMet = reizCurrentVal === 0 || gVal >= reizCurrentVal;
+  if (!bidMet) { won = false; } // overbid
+
+  var points = won ? gVal : -2*gVal;
+  scores[declarer] += points;
+
+  // Build result text
+  var rt = '';
+  rt += '🃏 Spiel: ' + getGameName(currentGame.type) + (currentGame.hand?' (Hand)':'') + '\n';
+  rt += '👤 Alleinspieler: ' + (declarer==='du'?'Du':declarer.charAt(0).toUpperCase()+declarer.slice(1)) + '\n';
+  rt += '🎯 Augen: ' + declarerPts + ' (Alleinspieler) / ' + opponentPts + ' (Gegner)\n';
+  if (skatPts > 0) rt += '📦 Skat: +' + skatPts + ' Pkt\n';
+  rt += '📊 Spielwert: ' + gVal + '\n';
+  if (!bidMet) rt += '⚠️ Überreizt! (Reiz: '+reizCurrentVal+')\n';
+  rt += '\n' + (won ? '✅ Gewonnen! (+'+points+' Pkt)' : '❌ Verloren! ('+points+' Pkt)');
+
+  $('result-title').textContent = won ? '🏆 Spiel gewonnen!' : '😔 Spiel verloren';
+  $('result-text').textContent = rt;
+  $('round-result').classList.add('visible');
+  renderScores();
+
+  showTrainer(getEndRoundComment(won, declarerPts, currentGame.type, declarer, bidMet, gVal));
+}
+
+// ──────────────────────────────────────────────────────────────
+// NEXT ROUND
+// ──────────────────────────────────────────────────────────────
+function nextRound() {
+  dealerIdx = (dealerIdx + 1) % 3;
+  startNewRound();
+}
+
+function startNewRound() {
+  phase = 'idle';
+  currentTrick = [];
+  currentGame = null;
+  declarer = null;
+  reizCurrentVal = 0;
+  reizCurrentIdx = 0;
+  selectedCards = [];
+  drueckenCards = [];
+  skatTaken = false;
+  hideAll();
+  deal();
+  renderAll();
+  renderDealerStars();
+  setStatus('Karten ausgeteilt!', 'Reizen beginnt...');
+  setTimeout(startReizen, 600);
+}
+
+// ──────────────────────────────────────────────────────────────
+// RENDER ALL
+// ──────────────────────────────────────────────────────────────
+function renderAll() {
+  renderOppHands();
+  renderPlayerHand();
+  renderPlayArea();
+}
+
+// ──────────────────────────────────────────────────────────────
+// TRAINER COMMENTS
+// ──────────────────────────────────────────────────────────────
+function getHandStrengthComment(hand, maxBid) {
+  var trumpCount = 0;
+  var aceCount = 0;
+  hand.forEach(function(c){ if(c.rank==='B') trumpCount++; if(c.rank==='A') aceCount++; });
+  var msgs = {
+    anfaenger: [
+      '📋 Deine Hand hat ' + trumpCount + ' Buben und ' + aceCount + ' Asse. ',
+      maxBid >= 36 ? '💪 Das ist eine gute Hand! Du kannst bis ' + maxBid + ' reizen.' :
+      maxBid >= 24 ? '👍 Eine mittlere Hand. Vorsichtig bis ' + maxBid + ' reizen.' :
+      '⚠️ Schwache Hand. Überlege ob du überhaupt reizt.'
+    ],
+    fortgeschritten: [
+      '🎯 Max. Reizwert ca. ' + maxBid + '. ' +
+      (maxBid >= 36 ? 'Starke Hand, aktiv reizen!' : maxBid >= 24 ? 'Mittlere Hand.' : 'Schwache Hand, passen erwägen.')
+    ],
+    experte: [
+      '📊 Reizgrenze: ' + maxBid + ' | Buben: ' + trumpCount + ' | Asse: ' + aceCount
+    ]
+  };
+  var arr = msgs[level] || msgs.anfaenger;
+  return arr.join('');
+}
+
+function getReizWinComment(val, player) {
+  if (level === 'anfaenger') return '🎉 Du hast das Reizen gewonnen mit ' + val + '! Jetzt kannst du das Skat aufnehmen und dein Spiel ansagen.';
+  if (level === 'fortgeschritten') return '✅ Reiz gewonnen bei ' + val + '. Skat aufnehmen oder Hand spielen?';
+  return '🏆 Reizwert: ' + val + '. Spiel bestimmen.';
+}
+
+function getGameTypeHint(hand, skat) {
+  var combined = hand.concat(skat);
+  var best = 'kreuz'; var bestVal = 0;
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
+    var mat = countMatadors(combined, gt);
+    var v = BASE_VALUES[gt]*(mat+1);
+    if (v > bestVal) { bestVal = v; best = gt; }
+  });
+  if (level === 'anfaenger') {
+    return '💡 Tipp: Schau welche Farbe du am häufigsten hast. Das könnte dein Trumpf sein. ' +
+      'Empfehlung: ' + getGameName(best) + ' (Spielwert ca. ' + bestVal + ')';
+  }
+  if (level === 'fortgeschritten') return '🎯 Empfehlung: ' + getGameName(best) + ' (ca. ' + bestVal + ' Pkt)';
+  return '📊 Optimales Spiel: ' + getGameName(best);
+}
+
+function getDrueckenHint(hand) {
+  if (level === 'anfaenger') return '💡 Drücke 2 Karten die wenig Punkte bringen und die du nicht brauchst. Vermeide Trümpfe zu drücken!';
+  if (level === 'fortgeschritten') return '🎯 Drücke punktearme Karten oder Fehlfarben die du abwerfen möchtest.';
+  return '📊 Optimale Drückkarten wählen: schwache Fehlfarben bevorzugen.';
+}
+
+function getPlayStartComment() {
+  if (declarer === 'du') {
+    if (level === 'anfaenger') return '🎮 Du spielst allein! Ziehe deine Trümpfe ein und sammle Punkte. Du brauchst 61 Augen.';
+    if (level === 'fortgeschritten') return '🎯 Als Alleinspieler: Trümpfe ziehen, dann Asse einsammeln!';
+    return '📊 Alleinspieler. Trümpfe: ' + hands.du.filter(function(c){return isTrump(c,currentGame.type);}).length;
+  } else {
+    if (level === 'anfaenger') return '🤝 Du spielst als Gegenpartei! Versuche dem Alleinspieler Punkte abzunehmen. Ihr braucht zusammen 60 Augen.';
+    if (level === 'fortgeschritten') return '🎯 Gegenpartei: Fehlfarben stechen, hohe Karten kassieren!';
+    return '📊 Gegenspieler. Ziel: 60+ Augen für die Gegenpartei.';
+  }
+}
+
+function getCardPlayComment(card, trick, hand, gameType, declarer) {
+  var isDecl = declarer === 'du';
+  var pts = cardPoints(card);
+  var trump = isTrump(card, gameType);
+
+  if (trick.length === 1) {
+    // Player led
+    if (trump && isDecl && level === 'anfaenger') return '✅ Gut! Trümpfe ziehen ist als Alleinspieler oft richtig.';
+    if (!trump && isDecl && pts >= 10 && level !== 'experte') return '💡 Asse und Zehnen früh zu spielen kann riskant sein – nur wenn du sicher bist zu gewinnen.';
+    return '';
+  }
+
+  // Following
+  var ledCard = trick[0].card;
+  var ledTrump = isTrump(ledCard, gameType);
+  if (trump && !ledTrump && level === 'anfaenger') return '♟️ Du stichst mit Trumpf! Gut wenn du den Stich gewinnen willst.';
+  if (pts === 10 && level === 'anfaenger') return '💰 Du spielst eine Zehn – hohe Punkte! Stelle sicher dass du gewinnst.';
+  return '';
+}
+
+function getEndRoundComment(won, pts, gameType, decl, bidMet, gVal) {
+  var isPlayer = decl === 'du';
+  if (!bidMet && isPlayer) {
+    return '⚠️ Du hast überreizt! Dein Spielwert (' + gVal + ') war niedriger als dein Reizwert. Nächstes Mal vorsichtiger reizen!';
+  }
+  if (isPlayer && won) {
+    if (pts >= 90) return '🌟 Hervorragend! Schneider! Du hast ' + pts + ' Augen gemacht.';
+    return '✅ Gut gespielt! Mit ' + pts + ' Augen gewonnen.';
+  }
+  if (isPlayer && !won) {
+    if (level === 'anfaenger') return '😔 Schade, du hast verloren. Du hattest ' + pts + ' Augen, gebraucht wären 61. Versuche mehr Trümpfe einzuziehen!';
+    return '❌ Verloren mit ' + pts + ' Augen. Analyse: Trümpfe früher ziehen, Asse sichern.';
+  }
+  if (!isPlayer && won) return '✅ Die Gegenpartei hat gewonnen! Ihr hattet genug Augen.';
+  if (!isPlayer && !won) return '😔 Der Alleinspieler hat gewonnen. Gut für ihn!';
+  return '';
+}
+
+// ──────────────────────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────────────────────
+function getGameName(type) {
+  var names = { kreuz:'Kreuz ♣', pik:'Pik ♠', herz:'Herz ♥', karo:'Karo ♦', grand:'Grand', null:'Null' };
+  return names[type] || type;
+}
+
+// ──────────────────────────────────────────────────────────────
+// LEVEL
+// ──────────────────────────────────────────────────────────────
+function setLevel(l) {
+  level = l;
+  $('level-screen').classList.add('hidden');
+  var names = { anfaenger:'🌱 Anfänger', fortgeschritten:'⚡ Fortgeschrittener', experte:'🏆 Experte' };
+  $('header-level').textContent = names[l] || l;
+  startNewRound();
+}
+
+// ──────────────────────────────────────────────────────────────
+// BUTTONS
+// ──────────────────────────────────────────────────────────────
+$('new-game-btn').addEventListener('click', function(){
+  scores = {vorhand:0,mittelhand:0,du:0};
+  renderScores();
+  startNewRound();
+});
+
+$('level-btn').addEventListener('click', function(){
+  $('level-screen').classList.remove('hidden');
+});
+
+$('reiz-ja').addEventListener('click', playerReizJa);
+$('reiz-nein').addEventListener('click', playerReizNein);
+
+// Init
+renderScores();
+</script>
+</body>
+</html>
