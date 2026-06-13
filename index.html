@@ -196,6 +196,20 @@ body {
   text-transform: uppercase; text-align: center; margin-bottom: 2px;
 }
 .dealer-star { color: #d4a83c; font-size: 12px; }
+
+/* ── GAME INFO BAR ── */
+#game-info-bar {
+  background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(212,168,60,0.2);
+  padding: 7px 14px; display: flex; justify-content: space-around; align-items: center;
+  flex-wrap: wrap; gap: 6px;
+}
+.gib-cell { text-align: center; }
+.gib-label { font-size: 9px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; }
+.gib-val { font-size: 13px; color: #d4a83c; font-weight: bold; }
+.gib-val.green { color: #7ab87a; }
+.gib-val.red { color: #e07060; }
+.player-label .rauskommt { color: #d4a83c; font-size: 11px; font-weight: bold; }
+.player-label .alleinspieler { color: #7ab87a; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -246,16 +260,36 @@ body {
   </div>
 </div>
 
+<!-- GAME INFO BAR -->
+<div id="game-info-bar">
+  <div class="gib-cell">
+    <div class="gib-label">Spiel</div>
+    <div class="gib-val" id="gib-spiel">–</div>
+  </div>
+  <div class="gib-cell">
+    <div class="gib-label">Alleinspieler</div>
+    <div class="gib-val green" id="gib-alleinspieler">–</div>
+  </div>
+  <div class="gib-cell">
+    <div class="gib-label">Rauskommt</div>
+    <div class="gib-val" id="gib-rauskommt">–</div>
+  </div>
+  <div class="gib-cell">
+    <div class="gib-label">Reizwert</div>
+    <div class="gib-val" id="gib-reizwert">–</div>
+  </div>
+</div>
+
 <div id="main">
   <!-- Opponent 1 (Vorhand) -->
   <div>
-    <div class="player-label">Vorhand <span class="dealer-star" id="dealer-v">★</span></div>
+    <div class="player-label" id="label-vorhand">Vorhand <span class="dealer-star" id="dealer-v">★</span></div>
     <div class="opp-area" id="opp1-hand"></div>
   </div>
 
   <!-- Opponent 2 (Mittelhand) -->
   <div>
-    <div class="player-label">Mittelhand <span class="dealer-star" id="dealer-m"></span></div>
+    <div class="player-label" id="label-mittelhand">Mittelhand <span class="dealer-star" id="dealer-m"></span></div>
     <div class="opp-area" id="opp2-hand"></div>
   </div>
 
@@ -733,6 +767,7 @@ function doReizStep() {
         '<b style="color:#d4a83c">' + respName + '</b> hat ' + (reizCurrentIdx===0?'geboten':reizCurrentVal+' gehalten') + '.<br>' +
         'Reizt du <b style="color:#d4a83c">' + val + '</b>?';
       reizCurrentVal = val;
+      updateGameInfoBar();
       setStatus('Reizen: ' + val);
       return; // wait for player input
     } else {
@@ -770,12 +805,14 @@ function playerReizNein() {
 
 function playerWinsReiz() {
   declarer = 'du';
+  updateGameInfoBar();
   showTrainer(getReizWinComment(reizCurrentVal, 'du'));
   startGameType();
 }
 
 function aiWinsReiz(player) {
   declarer = player;
+  updateGameInfoBar();
   setStatus(player.charAt(0).toUpperCase()+player.slice(1) + ' spielt! Reizwert: ' + reizCurrentVal);
   showTrainer('📢 ' + (player==='vorhand'?'Vorhand':'Mittelhand') + ' hat das Spiel gewonnen (Reizwert: ' + reizCurrentVal + '). Du spielst als Gegenpartei.');
   // AI picks up skat and chooses game
@@ -869,6 +906,7 @@ $('confirm-game-btn').addEventListener('click', function(){
   if (!chosenGameType) { showTrainer('⚠️ Bitte wähle zuerst ein Spiel aus!'); return; }
   if (phase === 'druecken') { showTrainer('⚠️ Du musst erst 2 Karten drücken!'); return; }
   currentGame = { type: chosenGameType, hand: handSpiel, schneider: schneiderAngesagt, schwarz: schwarzAngesagt };
+  updateGameInfoBar();
   $('gametype-area').classList.remove('visible');
   $('skat-area').classList.remove('visible');
   startPlaying();
@@ -909,6 +947,7 @@ function aiChoosesGame(player) {
   hands[player] = allCards.slice(2);
   skat = pressed;
   currentGame = { type: best, hand: false, schneider: false, schwarz: false };
+  updateGameInfoBar();
   setStatus((player==='vorhand'?'Vorhand':'Mittelhand') + ' spielt ' + getGameName(best));
   startPlaying();
 }
@@ -925,15 +964,11 @@ function startPlaying() {
   $('gametype-area').classList.remove('visible');
   $('skat-area').classList.remove('visible');
 
-  // Vorhand leads (player left of dealer)
-  // Dealer: dealerIdx 0=vorhand,1=mittelhand,2=du
-  // Vorhand = left of dealer
-  var order = ['vorhand','mittelhand','du'];
-  var vhIdx = (dealerIdx + 1) % 3; // actually in skat: dealer=hinterhand, vorhand=left of dealer
-  // Standard: vorhand always leads first trick
+  // Vorhand leads first trick always
   currentPlayer = 'vorhand';
 
   renderAll();
+  updateGameInfoBar();
   setStatus('Spiel: ' + getGameName(currentGame.type), declarer === 'du' ? 'Du spielst allein!' : (declarer.charAt(0).toUpperCase()+declarer.slice(1)) + ' spielt allein');
   showTrainer(getPlayStartComment());
 
@@ -1093,6 +1128,7 @@ function resolveTrick() {
   setTimeout(function(){
     $('stich-info').textContent = '';
     renderAll();
+    updateGameInfoBar();
     if (currentPlayer !== 'du') setTimeout(aiPlay, 600);
     else setStatus('Du bist dran!');
   }, 800);
@@ -1174,6 +1210,7 @@ function startNewRound() {
   deal();
   renderAll();
   renderDealerStars();
+  updateGameInfoBar();
   setStatus('Karten ausgeteilt!', 'Reizen beginnt...');
   setTimeout(startReizen, 600);
 }
@@ -1185,6 +1222,7 @@ function renderAll() {
   renderOppHands();
   renderPlayerHand();
   renderPlayArea();
+  updateGameInfoBar();
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -1297,6 +1335,59 @@ function getEndRoundComment(won, pts, gameType, decl, bidMet, gVal) {
 function getGameName(type) {
   var names = { kreuz:'Kreuz ♣', pik:'Pik ♠', herz:'Herz ♥', karo:'Karo ♦', grand:'Grand', null:'Null' };
   return names[type] || type;
+}
+
+function updateGameInfoBar() {
+  // Spiel
+  if (currentGame) {
+    var gname = getGameName(currentGame.type);
+    if (currentGame.hand) gname += ' Hand';
+    if (currentGame.schneider) gname += ' Schn.';
+    if (currentGame.schwarz) gname += ' Schw.';
+    $('gib-spiel').textContent = gname;
+  } else {
+    $('gib-spiel').textContent = phase === 'reizen' ? 'Reizen...' : '–';
+  }
+
+  // Alleinspieler
+  if (declarer) {
+    var dname = declarer === 'du' ? '👤 Du' :
+      declarer === 'vorhand' ? 'Vorhand' : 'Mittelhand';
+    $('gib-alleinspieler').textContent = dname;
+    $('gib-alleinspieler').className = 'gib-val ' + (declarer === 'du' ? 'green' : 'red');
+  } else {
+    $('gib-alleinspieler').textContent = '–';
+    $('gib-alleinspieler').className = 'gib-val';
+  }
+
+  // Rauskommt (wer den nächsten Stich anführt)
+  if (phase === 'playing' && currentPlayer) {
+    var cpname = currentPlayer === 'du' ? '👤 Du' :
+      currentPlayer === 'vorhand' ? 'Vorhand' : 'Mittelhand';
+    $('gib-rauskommt').textContent = cpname;
+  } else if (phase === 'reizen') {
+    // Vorhand kommt raus im ersten Stich
+    $('gib-rauskommt').textContent = 'Vorhand';
+  } else {
+    $('gib-rauskommt').textContent = '–';
+  }
+
+  // Reizwert
+  $('gib-reizwert').textContent = reizCurrentVal > 0 ? reizCurrentVal : '–';
+
+  // Update player labels to show who is rauskommt / alleinspieler
+  ['vorhand','mittelhand','du'].forEach(function(p) {
+    var labelId = p === 'du' ? null : 'label-' + p;
+    if (!labelId) return;
+    var el = $(labelId);
+    var base = p.charAt(0).toUpperCase() + p.slice(1);
+    var starHtml = ' <span class="dealer-star" id="dealer-' + p.charAt(0) + '">' +
+      (dealerIdx === (p==='vorhand'?0:1) ? '★' : '') + '</span>';
+    var extra = '';
+    if (phase === 'playing' && currentPlayer === p) extra = ' <span class="rauskommt">▶ dran</span>';
+    if (declarer === p) extra += ' <span class="alleinspieler">★ Allein</span>';
+    el.innerHTML = base + starHtml + extra;
+  });
 }
 
 // ──────────────────────────────────────────────────────────────
