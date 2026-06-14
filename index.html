@@ -1203,6 +1203,1130 @@ function startNewRound(){
 // ── SORT TOGGLE ──
 $('sort-btn').addEventListener('click',function(){
   sortDir*=-1;
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Oli's Skattrainer</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: Georgia, serif; background: radial-gradient(ellipse at 50% 0%, #1a4a1a 0%, #0d2b0d 50%, #060f06 100%); min-height: 100vh; color: #e8dcc0; max-width: 480px; margin: 0 auto; overflow-x: hidden; }
+
+/* API KEY SCREEN */
+#apikey-screen { position: fixed; inset: 0; background: radial-gradient(ellipse at 50% 0%, #1a4a1a 0%, #0d2b0d 50%, #060f06 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 24px; z-index: 1000; text-align: center; }
+#apikey-screen.hidden { display: none; }
+#ak-logo { font-size: 52px; margin-bottom: 14px; }
+#ak-title { font-size: 28px; color: #d4a83c; font-style: italic; margin-bottom: 4px; }
+#ak-sub { font-size: 10px; color: #5a7a50; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+#ak-desc { font-size: 13px; color: #8aadba; line-height: 1.9; margin-bottom: 20px; }
+#ak-input { width: 100%; padding: 13px 14px; border-radius: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(212,168,60,0.35); color: #e8dcc0; font-size: 13px; font-family: monospace; outline: none; margin-bottom: 10px; }
+#ak-error { color: #e07060; font-size: 12px; margin-bottom: 8px; min-height: 16px; }
+#ak-btn { width: 100%; padding: 14px; border-radius: 12px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 15px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; margin-bottom: 16px; }
+#ak-hint { font-size: 11px; color: #3a5870; line-height: 1.7; }
+
+/* LEVEL SCREEN */
+#level-screen { position: fixed; inset: 0; background: radial-gradient(ellipse at 50% 0%, #1a4a1a 0%, #0d2b0d 50%, #060f06 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 24px; z-index: 999; text-align: center; overflow-y: auto; }
+#level-screen.hidden { display: none; }
+#level-logo { font-size: 52px; margin-bottom: 10px; }
+#level-title { font-size: 28px; color: #d4a83c; font-style: italic; margin-bottom: 4px; }
+#level-sub { font-size: 10px; color: #5a7a50; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+.level-btn { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(212,168,60,0.3); background: rgba(212,168,60,0.08); color: #e8dcc0; font-size: 14px; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; text-align: left; }
+.level-btn .level-name { color: #d4a83c; font-weight: bold; display: block; margin-bottom: 3px; }
+.level-btn .level-desc { font-size: 11px; color: #7a9a70; line-height: 1.5; }
+
+/* HEADER */
+#header { background: rgba(6,15,6,0.97); border-bottom: 1px solid rgba(212,168,60,0.2); padding: 7px 10px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 6px; }
+#header-title { font-style: italic; font-size: 15px; color: #d4a83c; flex: 1; }
+#header-level { font-size: 8px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; }
+#header-version { font-size: 7px; color: #3a5a30; letter-spacing: 1px; margin-top: 1px; }
+.hbtn { background: rgba(212,168,60,0.1); border: 1px solid rgba(212,168,60,0.25); border-radius: 7px; padding: 4px 7px; color: #d4a83c; font-size: 10px; cursor: pointer; font-family: Georgia,serif; white-space: nowrap; }
+
+/* SCORE BAR */
+#score-bar { background: rgba(0,0,0,0.45); border-bottom: 1px solid rgba(212,168,60,0.15); padding: 5px 8px; display: flex; justify-content: space-around; }
+.sc-cell { text-align: center; }
+.sc-name { font-size: 8px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; }
+.sc-val { font-size: 17px; color: #d4a83c; font-weight: bold; }
+.sc-you { color: #7ab87a; }
+
+/* INFO BAR */
+#info-bar { background: rgba(0,0,0,0.55); border-bottom: 1px solid rgba(80,160,80,0.2); padding: 5px 8px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 3px; }
+.ib-cell { text-align: center; min-width: 55px; }
+.ib-label { font-size: 7px; color: #4a6a40; letter-spacing: 1px; text-transform: uppercase; }
+.ib-val { font-size: 12px; color: #d4a83c; font-weight: bold; line-height: 1.3; }
+.ib-val.green { color: #7ab87a; } .ib-val.red { color: #e07060; } .ib-val.blue { color: #70a8e0; }
+
+/* REIZ LOG */
+#reiz-log-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2); border-radius: 10px; padding: 8px 10px; display: none; max-height: 110px; overflow-y: auto; }
+#reiz-log-box.visible { display: block; }
+#reiz-log-title { font-size: 9px; color: #d4a83c; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+.rll { font-size: 11px; line-height: 1.6; }
+.rll.pass { color: #e07060; } .rll.bid { color: #d4a83c; } .rll.hold { color: #7ab87a; }
+
+/* TABLE */
+#table { padding: 7px 8px; display: flex; flex-direction: column; gap: 6px; }
+
+/* OPPONENTS */
+#opps-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; }
+.opp-box { flex: 1; border-radius: 12px; padding: 7px 5px; text-align: center; max-width: 110px; border: 2px solid rgba(212,168,60,0.15); background: rgba(0,0,0,0.3); transition: all 0.3s; }
+.opp-box.active-player { border-color: #f0c040 !important; background: rgba(212,168,60,0.18) !important; box-shadow: 0 0 14px rgba(212,168,60,0.5); }
+.opp-box.allein-box { border-color: rgba(80,200,80,0.5) !important; background: rgba(20,80,20,0.4) !important; }
+.opp-name { font-size: 9px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.opp-role { font-size: 9px; color: #d4a83c; margin-bottom: 2px; }
+.opp-game { font-size: 10px; color: #7ab87a; font-weight: bold; margin-bottom: 3px; min-height: 13px; }
+.opp-cards-row { display: flex; gap: 2px; justify-content: center; flex-wrap: wrap; margin-bottom: 3px; }
+.mini-card { width: 10px; height: 15px; border-radius: 2px; background: linear-gradient(135deg,#1a4a8a,#0d2b5a); border: 1px solid rgba(100,150,220,0.4); }
+.opp-badge { display: inline-block; font-size: 9px; border-radius: 5px; padding: 1px 4px; margin-top: 2px; }
+.badge-allein { background: rgba(80,180,80,0.25); color: #7ab87a; }
+.badge-gegen { background: rgba(100,100,120,0.25); color: #9090a0; }
+.badge-dran { background: rgba(212,168,60,0.4); color: #fff; font-weight: bold; animation: pulse 0.8s infinite alternate; }
+@keyframes pulse { from{opacity:0.7}to{opacity:1} }
+
+/* CENTER */
+#center-area { background: rgba(0,50,0,0.4); border: 1px solid rgba(212,168,60,0.2); border-radius: 12px; padding: 8px; min-height: 88px; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+#play-label { font-size: 8px; color: #4a7a40; letter-spacing: 2px; text-transform: uppercase; }
+#play-cards { display: flex; gap: 7px; justify-content: center; align-items: flex-end; min-height: 66px; }
+#stich-info { font-size: 10px; color: #7a9a70; text-align: center; }
+#last-stich-btn { font-size: 9px; color: #5a7a50; border: 1px solid rgba(90,120,80,0.3); border-radius: 7px; padding: 2px 7px; cursor: pointer; background: rgba(0,0,0,0.2); font-family: Georgia,serif; display:none; }
+
+/* LAST STICH OVERLAY */
+#last-stich-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 500; align-items: center; justify-content: center; flex-direction: column; }
+#last-stich-overlay.visible { display: flex; }
+#last-stich-inner { background: rgba(10,30,10,0.97); border: 1px solid rgba(212,168,60,0.3); border-radius: 16px; padding: 18px; text-align: center; max-width: 320px; width: 92%; }
+#last-stich-title { font-size: 12px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+#last-stich-cards { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+#last-stich-winner { font-size: 12px; color: #7ab87a; margin-bottom: 12px; }
+#close-last-stich { padding: 9px 22px; border-radius: 9px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-family: Georgia,serif; font-size: 13px; cursor: pointer; }
+
+/* SKAT */
+#skat-area { background: rgba(0,0,0,0.3); border: 1px solid rgba(212,168,60,0.15); border-radius: 9px; padding: 7px; display: none; text-align: center; }
+#skat-area.visible { display: block; }
+#skat-label { font-size: 8px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+#skat-cards { display: flex; gap: 7px; justify-content: center; }
+
+/* STATUS */
+#status-area { text-align: center; padding: 3px; }
+#status-text { font-size: 12px; color: #5a7a50; letter-spacing: 1px; }
+#game-sub { font-size: 10px; color: #3a5a30; margin-top: 2px; }
+
+/* REIZEN input */
+#reiz-area { background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2); border-radius: 11px; padding: 11px; display: none; }
+#reiz-area.visible { display: block; }
+#reiz-title { font-size: 10px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; text-align: center; }
+#reiz-text { font-size: 13px; color: #e8dcc0; text-align: center; margin-bottom: 10px; line-height: 1.6; }
+#reiz-btns { display: flex; gap: 8px; justify-content: center; }
+.reiz-btn { padding: 10px 20px; border-radius: 10px; border: 1px solid; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
+#reiz-ja { background: rgba(80,180,80,0.2); border-color: rgba(80,180,80,0.5); color: #80d880; }
+#reiz-nein { background: rgba(220,80,60,0.2); border-color: rgba(220,80,60,0.4); color: #e07060; }
+
+/* GAME TYPE */
+#gametype-area { background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2); border-radius: 11px; padding: 11px; display: none; }
+#gametype-area.visible { display: block; }
+#gametype-title { font-size: 10px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 7px; text-align: center; }
+#skat-row { display: flex; gap: 7px; justify-content: center; margin-bottom: 7px; flex-wrap: wrap; }
+#gametype-btns { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 7px; }
+.gt-btn { padding: 8px 11px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.3); background: rgba(212,168,60,0.08); color: #e8dcc0; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
+.gt-btn.active { background: rgba(212,168,60,0.3); border-color: #d4a83c; color: #d4a83c; }
+#skat-aufnehmen-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.4); background: rgba(212,168,60,0.12); color: #d4a83c; font-family: Georgia,serif; font-size: 12px; cursor: pointer; }
+#hand-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(100,180,100,0.3); background: rgba(100,180,100,0.08); color: #80d880; font-family: Georgia,serif; font-size: 12px; cursor: pointer; }
+#hand-btn.active { background: rgba(100,180,100,0.25); }
+#extras-row { display: flex; gap: 5px; justify-content: center; margin-bottom: 7px; flex-wrap: wrap; }
+.extra-btn { padding: 5px 9px; border-radius: 7px; border: 1px solid rgba(180,140,60,0.3); background: rgba(180,140,60,0.08); color: #c8a050; font-family: Georgia,serif; font-size: 11px; cursor: pointer; }
+.extra-btn.active { background: rgba(180,140,60,0.3); color: #d4a83c; }
+#confirm-game-btn { width: 100%; padding: 11px; border-radius: 9px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 14px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
+
+/* DRÜCKEN */
+#druecken-area { background: rgba(60,30,0,0.35); border: 1px solid rgba(212,168,60,0.2); border-radius: 11px; padding: 11px; display: none; }
+#druecken-area.visible { display: block; }
+#druecken-title { font-size: 10px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; text-align: center; }
+#druecken-text { font-size: 12px; color: #9aaa80; text-align: center; margin-bottom: 7px; }
+#druecken-btn { width: 100%; padding: 10px; border-radius: 9px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-size: 13px; font-family: Georgia,serif; cursor: pointer; }
+
+/* TRAINER */
+#trainer-box { background: rgba(20,60,20,0.5); border: 1px solid rgba(100,180,80,0.3); border-radius: 11px; padding: 9px 11px; display: none; }
+#trainer-box.visible { display: block; }
+#trainer-label { font-size: 8px; color: #60a050; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+#trainer-text { font-size: 12px; color: #b0d8a0; line-height: 1.7; white-space: pre-line; }
+#trainer-loading { font-size: 11px; color: #5a8a50; font-style: italic; display: none; }
+
+/* ROUND RESULT */
+#round-result { background: rgba(0,0,0,0.55); border: 1px solid rgba(212,168,60,0.3); border-radius: 13px; padding: 13px; display: none; text-align: center; }
+#round-result.visible { display: block; }
+#result-title { font-size: 15px; color: #d4a83c; margin-bottom: 7px; }
+#result-text { font-size: 12px; color: #b0b890; line-height: 1.8; margin-bottom: 11px; white-space: pre-line; text-align: left; }
+#result-btn { padding: 10px 26px; border-radius: 9px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 14px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
+
+/* CARDS */
+.card { width: 42px; height: 64px; border-radius: 6px; background: #f5f0e0; border: 1.5px solid #c0a060; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; flex-shrink: 0; transition: transform 0.15s, box-shadow 0.15s; user-select: none; }
+.card.red { color: #c02020; } .card.black { color: #1a1a1a; }
+.card .c-rank { font-size: 12px; line-height: 1; } .card .c-suit { font-size: 14px; line-height: 1; }
+.card.selected { transform: translateY(-10px); box-shadow: 0 8px 18px rgba(212,168,60,0.6); border-color: #d4a83c; }
+.card.drueck-sel { transform: translateY(-10px); box-shadow: 0 8px 18px rgba(224,112,64,0.6); border-color: #e07040; }
+.card.back { background: linear-gradient(135deg,#1a4a8a,#0d2b5a); border-color: rgba(100,150,220,0.4); cursor: default; color: #5080c0; font-size: 18px; }
+
+/* PLAYER HAND */
+#hand-area { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 3px 0; }
+.hand-label { font-size: 8px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; text-align: center; margin-bottom: 3px; }
+#du-box { border-radius: 10px; padding: 4px 0; border: 2px solid transparent; transition: all 0.3s; }
+#du-box.active-player { border-color: #f0c040; background: rgba(212,168,60,0.1); box-shadow: 0 0 14px rgba(212,168,60,0.4); }
+</style>
+</head>
+<body>
+
+<!-- API KEY SCREEN -->
+<div id="apikey-screen">
+  <div id="ak-logo">🃏</div>
+  <div id="ak-title">Oli's Skattrainer</div>
+  <div id="ak-sub">KI-Trainer · Skat lernen</div>
+  <div id="ak-desc">
+    Füge deinen <b style="color:#d4a83c">Google Gemini API-Key</b> ein.<br><br>
+    Noch keinen? So geht's:<br>
+    1. Öffne <b style="color:#7ab5d4">aistudio.google.com</b><br>
+    2. Anmelden → <b style="color:#7ab5d4">API Keys</b> → <b style="color:#7ab5d4">Schlüssel erstellen</b><br>
+    3. Key kopieren und hier einfügen:
+  </div>
+  <input id="ak-input" type="text" placeholder="AIza..." autocomplete="off" spellcheck="false"/>
+  <div id="ak-error"></div>
+  <button id="ak-btn" onclick="startWithKey()">🚀 Skattrainer starten</button>
+  <div id="ak-hint">✅ Kostenlos · Key wird nur auf deinem Gerät gespeichert · Nicht im Code sichtbar</div>
+</div>
+
+<!-- LEVEL SCREEN -->
+<div id="level-screen" class="hidden">
+  <div id="level-logo">🃏</div>
+  <div id="level-title">Oli's Skattrainer</div>
+  <div id="level-sub">Dein persönlicher KI-Skat-Coach</div>
+  <button class="level-btn" onclick="setLevel('anfaenger')">
+    <span class="level-name">🌱 Anfänger</span>
+    <span class="level-desc">Ich lerne noch. Der Trainer erklärt alles ausführlich und geduldig.</span>
+  </button>
+  <button class="level-btn" onclick="setLevel('fortgeschritten')">
+    <span class="level-name">⚡ Fortgeschrittener</span>
+    <span class="level-desc">Ich spiele regelmäßig. Der Trainer fokussiert sich auf Taktik.</span>
+  </button>
+  <button class="level-btn" onclick="setLevel('experte')">
+    <span class="level-name">🏆 Experte</span>
+    <span class="level-desc">Ich kenne alle Regeln. Präzise Fehleranalyse auf höchstem Niveau.</span>
+  </button>
+</div>
+
+<!-- LAST STICH OVERLAY -->
+<div id="last-stich-overlay">
+  <div id="last-stich-inner">
+    <div id="last-stich-title">🃏 Letzter Stich</div>
+    <div id="last-stich-cards"></div>
+    <div id="last-stich-winner"></div>
+    <button id="close-last-stich">Schließen</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div style="flex:1">
+    <div id="header-title">🃏 Oli's Skattrainer</div>
+    <div id="header-level"></div>
+    <div id="header-version">v1.4 · 14.06.2026 · 21:15</div>
+  </div>
+  <button class="hbtn" id="sort-btn">⇄ Sort</button>
+  <button class="hbtn" id="new-game-btn">↺ Neu</button>
+  <button class="hbtn" id="level-btn">Level</button>
+  <button class="hbtn" id="key-btn">🔑</button>
+</div>
+
+<!-- SCORE BAR -->
+<div id="score-bar">
+  <div class="sc-cell"><div class="sc-name">Vorhand</div><div class="sc-val" id="sc-vorhand">0</div></div>
+  <div class="sc-cell"><div class="sc-name">Mittelhand</div><div class="sc-val" id="sc-mittelhand">0</div></div>
+  <div class="sc-cell"><div class="sc-name sc-you">Du (Hinterh.)</div><div class="sc-val sc-you" id="sc-du">0</div></div>
+</div>
+
+<!-- INFO BAR -->
+<div id="info-bar">
+  <div class="ib-cell"><div class="ib-label">Spiel</div><div class="ib-val" id="ib-spiel">–</div></div>
+  <div class="ib-cell"><div class="ib-label">Alleinspieler</div><div class="ib-val green" id="ib-allein">–</div></div>
+  <div class="ib-cell"><div class="ib-label">Vorhand</div><div class="ib-val blue" id="ib-vorhand">–</div></div>
+  <div class="ib-cell"><div class="ib-label">Reizwert</div><div class="ib-val" id="ib-reiz">–</div></div>
+</div>
+
+<div id="table">
+  <div id="opps-row">
+    <div class="opp-box" id="box-vorhand">
+      <div class="opp-name">Vorhand</div>
+      <div class="opp-role" id="role-vorhand"></div>
+      <div class="opp-game" id="game-vorhand"></div>
+      <div class="opp-cards-row" id="opp1-cards"></div>
+      <div id="badge-vorhand"></div>
+    </div>
+    <div id="center-area">
+      <div id="play-label">Tisch</div>
+      <div id="play-cards"></div>
+      <div id="stich-info"></div>
+      <button id="last-stich-btn">🔍 Letzter Stich</button>
+    </div>
+    <div class="opp-box" id="box-mittelhand">
+      <div class="opp-name">Mittelhand</div>
+      <div class="opp-role" id="role-mittelhand"></div>
+      <div class="opp-game" id="game-mittelhand"></div>
+      <div class="opp-cards-row" id="opp2-cards"></div>
+      <div id="badge-mittelhand"></div>
+    </div>
+  </div>
+
+  <div id="reiz-log-box">
+    <div id="reiz-log-title">🎯 Reizverlauf</div>
+    <div id="reiz-log"></div>
+  </div>
+
+  <div id="skat-area">
+    <div id="skat-label">Skat</div>
+    <div id="skat-cards"></div>
+  </div>
+
+  <div id="status-area">
+    <div id="status-text">Level wählen um zu starten</div>
+    <div id="game-sub"></div>
+  </div>
+
+  <div id="reiz-area">
+    <div id="reiz-title">🎯 Du bist dran – Reizen</div>
+    <div id="reiz-text"></div>
+    <div id="reiz-btns">
+      <button class="reiz-btn" id="reiz-ja">✓ Ja / Halte</button>
+      <button class="reiz-btn" id="reiz-nein">✗ Passe</button>
+    </div>
+  </div>
+
+  <div id="gametype-area">
+    <div id="gametype-title">🃏 Spiel ansagen</div>
+    <div id="skat-row">
+      <button id="skat-aufnehmen-btn">📦 Skat aufnehmen</button>
+      <button id="hand-btn">✋ Hand spielen</button>
+    </div>
+    <div id="gametype-btns">
+      <button class="gt-btn" data-game="kreuz">♣ Kreuz</button>
+      <button class="gt-btn" data-game="pik">♠ Pik</button>
+      <button class="gt-btn" data-game="herz">♥ Herz</button>
+      <button class="gt-btn" data-game="karo">♦ Karo</button>
+      <button class="gt-btn" data-game="grand">👑 Grand</button>
+      <button class="gt-btn" data-game="null">0️⃣ Null</button>
+    </div>
+    <div id="extras-row">
+      <button class="extra-btn" id="schneider-btn">✂️ Schneider</button>
+      <button class="extra-btn" id="schwarz-btn">⚫ Schwarz</button>
+    </div>
+    <button id="confirm-game-btn">✅ Spiel bestätigen</button>
+  </div>
+
+  <div id="druecken-area">
+    <div id="druecken-title">♻ 2 Karten drücken</div>
+    <div id="druecken-text">Tippe 2 Karten an die du drücken möchtest</div>
+    <button id="druecken-btn">Ausgewählte Karten drücken</button>
+  </div>
+
+  <div id="trainer-box">
+    <div id="trainer-label">🎓 KI-Trainer</div>
+    <div id="trainer-loading">⏳ Trainer analysiert...</div>
+    <div id="trainer-text"></div>
+  </div>
+
+  <div id="round-result">
+    <div id="result-title"></div>
+    <div id="result-text"></div>
+    <button id="result-btn" onclick="nextRound()">▶ Nächste Runde</button>
+  </div>
+
+  <div id="du-box">
+    <div class="hand-label">Deine Hand (Hinterhand) <span id="dran-du" style="color:#d4a83c;font-size:10px"></span></div>
+    <div id="hand-area"></div>
+  </div>
+</div>
+
+<script>
+// ── API KEY ──
+var API_KEY = localStorage.getItem('skat_gemini_key') || '';
+
+function startWithKey() {
+  var val = document.getElementById('ak-input').value.trim();
+  if (!val || val.length < 10) { document.getElementById('ak-error').textContent = 'Bitte einen gültigen API-Key eingeben.'; return; }
+  API_KEY = val;
+  try { localStorage.setItem('skat_gemini_key', val); } catch(e) {}
+  document.getElementById('apikey-screen').classList.add('hidden');
+  document.getElementById('level-screen').classList.remove('hidden');
+}
+
+if (API_KEY && API_KEY.length > 10) {
+  document.getElementById('apikey-screen').classList.add('hidden');
+  document.getElementById('level-screen').classList.remove('hidden');
+}
+
+document.getElementById('key-btn').addEventListener('click', function() {
+  document.getElementById('ak-input').value = '';
+  document.getElementById('ak-error').textContent = '';
+  document.getElementById('apikey-screen').classList.remove('hidden');
+});
+
+// ── GEMINI API ──
+async function callGemini(prompt, systemPrompt) {
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + API_KEY;
+  var body = {
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: { maxOutputTokens: 400, temperature: 0.7, thinkingConfig: { thinkingBudget: 0 } }
+  };
+  if (systemPrompt) body.system_instruction = { parts: [{ text: systemPrompt }] };
+  var resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  var data = await resp.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.candidates[0].content.parts[0].text.trim();
+}
+
+var TRAINER_SYSTEM = `Du bist ein erfahrener Skat-Trainer der deutsch spricht. Antworte immer auf Deutsch, präzise und in maximal 3-4 kurzen Sätzen. Keine langen Erklärungen. Direkt zum Punkt. Nutze Symbole: ✅ gut, ⚠️ Fehler, 💡 Tipp, 📊 Analyse.`;
+
+async function trainerAnalyze(prompt) {
+  try {
+    showTrainerLoading(true);
+    var result = await callGemini(prompt, TRAINER_SYSTEM);
+    showTrainer(result);
+  } catch(e) {
+    showTrainer('⚠️ Trainer nicht verfügbar: ' + e.message);
+  } finally {
+    showTrainerLoading(false);
+  }
+}
+
+// ── CONSTANTS ──
+var SUITS=['kreuz','pik','herz','karo'];
+var RANKS=['7','8','9','10','B','D','K','A'];
+var SUIT_SYM={kreuz:'♣',pik:'♠',herz:'♥',karo:'♦'};
+var SUIT_COL={kreuz:'black',pik:'black',herz:'red',karo:'red'};
+var CARD_PTS={'7':0,'8':0,'9':0,'10':10,'B':2,'D':3,'K':4,'A':11};
+var JACK_ORDER=['kreuz','pik','herz','karo'];
+var BASE_VAL={kreuz:12,pik:11,herz:10,karo:9,grand:24,null:23};
+var REIZ_VALS=[18,20,22,23,24,27,30,33,35,36,40,44,45,46,48,50,54,55,59,60,63,66,70,72,77,80,81,84,88,90,96,99,100,108,110,117,120,121,126,130,132,135,140,143,144,150,154,165,168,176];
+var GAME_NAMES={kreuz:'Kreuz ♣',pik:'Pik ♠',herz:'Herz ♥',karo:'Karo ♦',grand:'Grand 👑',null:'Null 0️⃣'};
+var GAME_SYMS={kreuz:'♣',pik:'♠',herz:'♥',karo:'♦',grand:'👑',null:'0️⃣'};
+
+// ── STATE ──
+var level='anfaenger', sortDir=1;
+var scores={vorhand:0,mittelhand:0,du:0};
+var dealerIdx=2;
+var hands={vorhand:[],mittelhand:[],du:[]};
+var skat=[];
+var currentGame=null, declarer=null;
+var currentTrick=[], lastTrick=[], lastTrickWinner=null;
+var tricks={vorhand:[],mittelhand:[],du:[]};
+var trickPoints={vorhand:0,mittelhand:0,du:0};
+var currentPlayer=null, phase='idle';
+var reizCurrentVal=0, reizCurrentIdx=0;
+var reizPassed={vorhand:false,mittelhand:false,du:false};
+var handSpiel=false, drueckenCards=[], skatTaken=false;
+var schneiderAngesagt=false, schwarzAngesagt=false, chosenGameType=null;
+var maxBids={}, reizResponder='vorhand', reizPhase=0;
+var reizQueue=[], reizQueueRunning=false;
+var playedCards=[]; // all cards played so far this round
+
+var $=function(id){return document.getElementById(id);};
+
+// ── CARD HELPERS ──
+function makeCard(r,s){return{rank:r,suit:s,id:r+'_'+s};}
+function cardPts(c){return CARD_PTS[c.rank]||0;}
+function isJack(c){return c.rank==='B';}
+
+// CORRECT TRUMP RULES:
+// Null: no trump at all
+// Grand: only Jacks are trump (4 jacks)
+// Suit game: 4 Jacks + all cards of trump suit
+function isTrump(c,gt){
+  if(!gt||gt==='null') return false;
+  if(isJack(c)) return true; // Jacks always trump in Grand and suit games
+  if(gt==='grand') return false; // In Grand ONLY Jacks are trump
+  return c.suit===gt; // In suit game: trump suit cards (excl. jacks which are already covered)
+}
+
+function trumpRank(c,gt){
+  if(!gt||gt==='null') return -1;
+  if(isJack(c)) return 100+(3-JACK_ORDER.indexOf(c.suit)); // J♣=103, J♠=102, J♥=101, J♦=100
+  if(gt==='grand') return -1; // No other trumps in grand
+  if(c.suit===gt){
+    var o=['7','8','9','D','K','10','A']; // suit order (no jacks, they're handled above)
+    return o.indexOf(c.rank);
+  }
+  return -1;
+}
+
+// Null card ranking: no trump, suits ranked 7<8<9<10<B<D<K<A
+function nullRank(c, led){
+  if(c.suit!==led.suit) return -1;
+  var o=['7','8','9','10','B','D','K','A'];
+  return o.indexOf(c.rank);
+}
+
+function beats(c,o,gt){
+  if(gt==='null'){
+    // In null: no trump, must follow suit, highest card of led suit wins
+    var ct=false,ot=false; // no trump in null
+    if(c.suit!==o.suit) return false; // can't beat if different suit (already played)
+    var ord=['7','8','9','10','B','D','K','A'];
+    return ord.indexOf(c.rank)>ord.indexOf(o.rank);
+  }
+  var ct=isTrump(c,gt),ot=isTrump(o,gt);
+  if(ct&&!ot) return true;
+  if(!ct&&ot) return false;
+  if(ct&&ot) return trumpRank(c,gt)>trumpRank(o,gt);
+  if(c.suit!==o.suit) return false;
+  var ord=['7','8','9','10','B','D','K','A'];
+  return ord.indexOf(c.rank)>ord.indexOf(o.rank);
+}
+
+function getTrickWinner(trick,gt){
+  var w=trick[0];
+  for(var i=1;i<trick.length;i++) if(beats(trick[i].card,w.card,gt)) w=trick[i];
+  return w;
+}
+
+function sortHand(hand,gt){
+  var sorted=hand.slice().sort(function(a,b){
+    if(gt==='null'){
+      // Null: sort by suit then rank
+      var si=SUITS.indexOf(a.suit)-SUITS.indexOf(b.suit);
+      if(si!==0) return si;
+      var ord=['7','8','9','10','B','D','K','A'];
+      return ord.indexOf(a.rank)-ord.indexOf(b.rank);
+    }
+    var atr=trumpRank(a,gt||'grand'),btr=trumpRank(b,gt||'grand');
+    if(atr>=0&&btr>=0) return btr-atr;
+    if(atr>=0) return -1; if(btr>=0) return 1;
+    var si=SUITS.indexOf(a.suit)-SUITS.indexOf(b.suit);
+    if(si!==0) return si;
+    var ord=['7','8','9','10','B','D','K','A'];
+    return ord.indexOf(a.rank)-ord.indexOf(b.rank);
+  });
+  return sortDir===-1?sorted.reverse():sorted;
+}
+
+// ── DECK ──
+function createDeck(){var d=[];SUITS.forEach(function(s){RANKS.forEach(function(r){d.push(makeCard(r,s));});});return d;}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function deal(){var deck=shuffle(createDeck());hands.vorhand=deck.slice(0,10);hands.mittelhand=deck.slice(10,20);hands.du=deck.slice(20,30);skat=deck.slice(30,32);}
+
+// ── MATADORS / GAME VALUE ──
+function countMatadors(hand,gt){
+  if(gt==='null'||gt==='grand') return 0;
+  var hasKB=hand.some(function(c){return c.rank==='B'&&c.suit==='kreuz';});
+  var count=0,seq=['kreuz','pik','herz','karo'];
+  if(hasKB){for(var i=0;i<seq.length;i++){if(hand.some(function(c){return c.rank==='B'&&c.suit===seq[i];}))count++;else break;}}
+  else{for(var i=0;i<seq.length;i++){if(!hand.some(function(c){return c.rank==='B'&&c.suit===seq[i];}))count++;else break;}}
+  return Math.max(1,count);
+}
+function gameValue(gt,mat,hand,schn,schw,schnAns,schwAns){
+  var base=BASE_VAL[gt]||0;
+  if(gt==='null'){if(hand&&schw)return 59;if(hand)return 35;if(schw)return 46;return 23;}
+  var mult=mat+1;
+  if(hand)mult++;if(schn)mult++;if(schnAns)mult++;if(schw)mult++;if(schwAns)mult++;
+  return base*mult;
+}
+
+function computeMaxBid(player){
+  var hand=hands[player];
+  var best=0;
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
+    var trumps=hand.filter(function(c){return isTrump(c,gt);});
+    var mat=countMatadors(hand,gt);
+    var v=BASE_VAL[gt]*(mat+1);
+    var viable=(gt!=='grand'&&trumps.length>=5)||(gt==='grand'&&trumps.length>=4)||(gt!=='grand'&&trumps.length>=4&&hand.filter(function(c){return c.rank==='A'&&!isTrump(c,gt);}).length>=1);
+    if(viable&&v>best)best=v;
+  });
+  return best;
+}
+
+function chooseBestGame(hand,skatCards){
+  var combined=hand.concat(skatCards||[]);
+  var best=null,bestVal=0;
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
+    var trumps=combined.filter(function(c){return isTrump(c,gt);});
+    var mat=countMatadors(combined,gt);
+    var v=BASE_VAL[gt]*(mat+1);
+    var viable=(gt!=='grand'&&trumps.length>=5)||(gt==='grand'&&trumps.length>=4)||(gt!=='grand'&&trumps.length>=4&&combined.filter(function(c){return c.rank==='A'&&!isTrump(c,gt);}).length>=1);
+    if(viable&&v>bestVal){bestVal=v;best=gt;}
+  });
+  return best||'kreuz';
+}
+
+// ── RENDER ──
+function renderCardEl(card,opts){
+  opts=opts||{};
+  var el=document.createElement('div');el.className='card';
+  if(opts.back){el.className+=' back';el.textContent='🂠';return el;}
+  el.classList.add(SUIT_COL[card.suit]||'black');
+  var r=document.createElement('div');r.className='c-rank';r.textContent=card.rank;
+  var s=document.createElement('div');s.className='c-suit';s.textContent=SUIT_SYM[card.suit];
+  el.appendChild(r);el.appendChild(s);
+  if(opts.selected)el.classList.add('selected');
+  if(opts.drueck)el.classList.add('drueck-sel');
+  return el;
+}
+
+function renderMiniCards(cid,count){var el=$(cid);el.innerHTML='';for(var i=0;i<count;i++){var m=document.createElement('div');m.className='mini-card';el.appendChild(m);}}
+
+function getRoles(){
+  var vRole='Vorhand',mRole='Mittelhand';
+  if(dealerIdx===0)vRole='★ Geber';
+  else if(dealerIdx===1)mRole='★ Geber';
+  return{vorhand:vRole,mittelhand:mRole};
+}
+
+function updateInfoBar(){
+  if(currentGame){$('ib-spiel').textContent=GAME_SYMS[currentGame.type]+(currentGame.hand?' H':'');}
+  else{$('ib-spiel').textContent=phase==='reizen'?'🎯':'–';}
+  if(declarer){
+    var dn=declarer==='du'?'👤 Du':declarer==='vorhand'?'Vorhand':'Mittelhand';
+    var gs=currentGame?' '+GAME_SYMS[currentGame.type]+(currentGame.hand?' H':''):'';
+    $('ib-allein').textContent=dn+gs;
+    $('ib-allein').className='ib-val '+(declarer==='du'?'green':'red');
+  }else{$('ib-allein').textContent='–';$('ib-allein').className='ib-val';}
+  var roles=getRoles();
+  $('ib-vorhand').textContent=roles.vorhand;
+  $('ib-reiz').textContent=reizCurrentVal>0?reizCurrentVal:'–';
+  ['vorhand','mittelhand'].forEach(function(p){
+    var box=$(p==='vorhand'?'box-vorhand':'box-mittelhand');
+    var roleEl=$(p==='vorhand'?'role-vorhand':'role-mittelhand');
+    var gameEl=$(p==='vorhand'?'game-vorhand':'game-mittelhand');
+    var badgeEl=$(p==='vorhand'?'badge-vorhand':'badge-mittelhand');
+    roleEl.textContent=roles[p];
+    if(declarer===p&&currentGame){gameEl.textContent=GAME_SYMS[currentGame.type]+' '+GAME_NAMES[currentGame.type]+(currentGame.hand?' Hand':'');gameEl.style.color='#7ab87a';}
+    else if(declarer===p&&reizCurrentVal>0){gameEl.textContent='Reizwert: '+reizCurrentVal;gameEl.style.color='#d4a83c';}
+    else{gameEl.textContent='';}
+    box.classList.remove('active-player','allein-box');
+    if(phase==='playing'&&currentPlayer===p)box.classList.add('active-player');
+    if(declarer===p)box.classList.add('allein-box');
+    badgeEl.innerHTML='';
+    if(declarer===p){var b=document.createElement('span');b.className='opp-badge badge-allein';b.textContent='★ Allein';badgeEl.appendChild(b);}
+    else if(declarer&&declarer!==p){var b=document.createElement('span');b.className='opp-badge badge-gegen';b.textContent='Gegen';badgeEl.appendChild(b);}
+    if(phase==='playing'&&currentPlayer===p){var b=document.createElement('span');b.className='opp-badge badge-dran';b.textContent='▶ DRAN';badgeEl.appendChild(b);}
+  });
+  var duBox=$('du-box');
+  duBox.classList.remove('active-player');
+  if(phase==='playing'&&currentPlayer==='du')duBox.classList.add('active-player');
+  $('dran-du').textContent=(phase==='playing'&&currentPlayer==='du')?'▶ DU BIST DRAN':'';
+}
+
+function renderAll(){renderMiniCards('opp1-cards',hands.vorhand.length);renderMiniCards('opp2-cards',hands.mittelhand.length);renderPlayerHand();renderPlayArea();updateInfoBar();}
+
+function renderPlayerHand(){
+  var el=$('hand-area');el.innerHTML='';
+  var gt=currentGame?currentGame.type:null;
+  sortHand(hands.du,gt).forEach(function(card){
+    var isDrueck=drueckenCards.indexOf(card.id)>=0;
+    var ce=renderCardEl(card,{drueck:isDrueck});
+    ce.addEventListener('click',function(){onCardClick(card);});
+    el.appendChild(ce);
+  });
+}
+
+function renderPlayArea(){
+  var el=$('play-cards');el.innerHTML='';
+  currentTrick.forEach(function(entry){
+    var ce=renderCardEl(entry.card);
+    var lbl=document.createElement('div');lbl.style.cssText='font-size:8px;color:#5a7a50;text-align:center;margin-top:2px;letter-spacing:1px';
+    lbl.textContent=entry.player==='du'?'DU':entry.player==='vorhand'?'VH':'MH';
+    var w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+    w.appendChild(ce);w.appendChild(lbl);el.appendChild(w);
+  });
+}
+
+function renderSkat(){var el=$('skat-cards');el.innerHTML='';skat.forEach(function(card){el.appendChild(renderCardEl(card,{back:!skatTaken}));});}
+function setStatus(msg,sub){$('status-text').textContent=msg||'';$('game-sub').textContent=sub||'';}
+function showTrainer(msg){$('trainer-loading').style.display='none';if(!msg){$('trainer-box').classList.remove('visible');return;}$('trainer-text').textContent=msg;$('trainer-box').classList.add('visible');}
+function showTrainerLoading(on){$('trainer-loading').style.display=on?'block':'none';if(on){$('trainer-text').textContent='';$('trainer-box').classList.add('visible');}}
+function renderScores(){$('sc-vorhand').textContent=scores.vorhand;$('sc-mittelhand').textContent=scores.mittelhand;$('sc-du').textContent=scores.du;}
+function hideAll(){['reiz-area','gametype-area','druecken-area','trainer-box','round-result','skat-area','reiz-log-box'].forEach(function(id){$(id).classList.remove('visible');});}
+
+function cardName(c){return c.rank+SUIT_SYM[c.suit];}
+function handStr(hand){return hand.map(cardName).join(', ');}
+function trickStr(trick){return trick.map(function(e){return (e.player==='du'?'Du':e.player==='vorhand'?'Vorhand':'Mittelhand')+': '+cardName(e.card);}).join(' | ');}
+
+// ── REIZ LOG ──
+function addReizLog(text,cls){
+  var el=$('reiz-log');
+  var line=document.createElement('div');line.className='rll '+(cls||'');line.textContent=text;el.appendChild(line);el.scrollTop=el.scrollHeight;
+  $('reiz-log-box').classList.add('visible');
+}
+
+// ── REIZEN ──
+function enqueueReiz(fn,delay){reizQueue.push({fn:fn,delay:delay||700});}
+function runReizQueue(){
+  if(reizQueueRunning||reizQueue.length===0)return;
+  reizQueueRunning=true;
+  var item=reizQueue.shift();
+  setTimeout(function(){item.fn();reizQueueRunning=false;if(reizQueue.length>0)runReizQueue();},item.delay);
+}
+
+function startReizen(){
+  phase='reizen';
+  maxBids.vorhand=computeMaxBid('vorhand');maxBids.mittelhand=computeMaxBid('mittelhand');maxBids.du=computeMaxBid('du');
+  reizPassed={vorhand:false,mittelhand:false,du:false};
+  reizPhase=0;reizCurrentIdx=0;reizCurrentVal=0;reizResponder='vorhand';
+  reizQueue=[];reizQueueRunning=false;
+  $('reiz-log').innerHTML='';
+  updateInfoBar();
+  // Trainer: analyze player's hand before bidding
+  var handPrompt='Meine Hand: '+handStr(hands.du)+'. Mein Erfahrungslevel: '+level+'. Was ist meine stärkste Spieloption? Soll ich reizen und bis wie viel? Antworte kurz auf Deutsch.';
+  trainerAnalyze(handPrompt);
+  runAIReizPhase();
+}
+
+function runAIReizPhase(){
+  var val=REIZ_VALS[reizCurrentIdx];
+  if(!val){reizPassed.mittelhand=true;setTimeout(startPlayerReizPhase,400);return;}
+  if(reizPassed.mittelhand&&reizPassed.vorhand){setTimeout(startPlayerReizPhase,400);return;}
+  if(!reizPassed.mittelhand&&maxBids.mittelhand>=val){
+    enqueueReiz(function(){addReizLog('Mittelhand: "'+val+'"','bid');setStatus('Mittelhand reizt '+val);},700);
+    if(!reizPassed.vorhand&&maxBids.vorhand>=val){
+      enqueueReiz(function(){addReizLog('Vorhand: "Ja" – halte '+val,'hold');reizCurrentIdx++;reizCurrentVal=val;},700);
+      enqueueReiz(function(){runAIReizPhase();},200);
+    } else {
+      enqueueReiz(function(){addReizLog('Vorhand: "Weg"','pass');reizPassed.vorhand=true;reizCurrentVal=val;reizPhase=1;reizResponder='mittelhand';},700);
+      enqueueReiz(function(){startPlayerReizPhase();},300);
+    }
+  } else {
+    enqueueReiz(function(){addReizLog('Mittelhand: "Weg"','pass');reizPassed.mittelhand=true;reizPhase=1;reizResponder='vorhand';},500);
+    enqueueReiz(function(){startPlayerReizPhase();},300);
+  }
+  runReizQueue();
+}
+
+function startPlayerReizPhase(){
+  if(reizPassed.vorhand&&reizPassed.mittelhand){enqueueReiz(function(){addReizLog('Alle gepasst – du kannst spielen','hold');playerWinsReiz();},400);runReizQueue();return;}
+  var responder=reizResponder;
+  if(!responder||reizPassed[responder]){playerWinsReiz();return;}
+  var val=REIZ_VALS[reizCurrentIdx]||REIZ_VALS[0];
+  reizCurrentVal=val;updateInfoBar();
+  $('reiz-area').classList.add('visible');
+  var rname=responder==='vorhand'?'Vorhand':'Mittelhand';
+  $('reiz-text').innerHTML='<b style="color:#d4a83c">'+rname+'</b> '+(reizCurrentIdx>0?'hält. ':'bietet. ')+'Reizt du <b style="color:#d4a83c">'+val+'</b>?';
+  setStatus('Du bist dran beim Reizen: '+val+'?');
+}
+
+function playerReizJa(){
+  $('reiz-area').classList.remove('visible');
+  addReizLog('Du: "'+reizCurrentVal+'"','bid');
+  var responder=reizResponder;
+  reizCurrentIdx++;
+  var nextVal=REIZ_VALS[reizCurrentIdx];
+  if(!nextVal||maxBids[responder]<nextVal){
+    addReizLog((responder==='vorhand'?'Vorhand':'Mittelhand')+': "Weg"','pass');
+    reizPassed[responder]=true;
+    setTimeout(playerWinsReiz,400);
+  } else {
+    addReizLog((responder==='vorhand'?'Vorhand':'Mittelhand')+': "Ja" – halte '+reizCurrentVal,'hold');
+    reizCurrentVal=nextVal;
+    setTimeout(startPlayerReizPhase,600);
+  }
+}
+
+function playerReizNein(){
+  $('reiz-area').classList.remove('visible');
+  addReizLog('Du: "Weg"','pass');
+  reizPassed.du=true;
+  var responder=reizResponder;
+  if(responder&&!reizPassed[responder]){setTimeout(function(){aiWinsReiz(responder);},400);}
+  else{setTimeout(noOneReized,400);}
+}
+
+function playerWinsReiz(){
+  declarer='du';updateInfoBar();
+  addReizLog('✅ Du hast das Reizen gewonnen!','hold');
+  setTimeout(startGameType,600);
+}
+
+function aiWinsReiz(player){
+  declarer=player;updateInfoBar();
+  addReizLog('✅ '+(player==='vorhand'?'Vorhand':'Mittelhand')+' gewinnt das Reizen ('+reizCurrentVal+')','hold');
+  setStatus((player==='vorhand'?'Vorhand':'Mittelhand')+' spielt! Reizwert: '+reizCurrentVal);
+  // Trainer comment on AI winning
+  trainerAnalyze('Als Gegenpartei: '+(player==='vorhand'?'Vorhand':'Mittelhand')+' hat das Reizen gewonnen mit '+reizCurrentVal+'. Meine Hand: '+handStr(hands.du)+'. Wie soll ich als Gegenspieler vorgehen?');
+  setTimeout(function(){aiChoosesGame(player);},900);
+}
+
+function noOneReized(){addReizLog('Alle gepasst','pass');setStatus('Alle gepasst – neue Runde');showTrainer('🔄 Alle haben gepasst. Neue Runde beginnt...');setTimeout(nextRound,2000);}
+
+// ── GAME TYPE (Player) ──
+function startGameType(){
+  phase='gametype';skatTaken=false;chosenGameType=null;schneiderAngesagt=false;schwarzAngesagt=false;handSpiel=false;
+  $('gametype-area').classList.add('visible');$('skat-area').classList.add('visible');
+  renderSkat();renderPlayerHand();
+  setStatus('Du bist Alleinspieler! Wähle dein Spiel.');
+  document.querySelectorAll('.gt-btn').forEach(function(b){b.classList.remove('active');});
+  $('hand-btn').classList.remove('active');$('schneider-btn').classList.remove('active');$('schwarz-btn').classList.remove('active');
+  $('skat-aufnehmen-btn').style.display='';
+  // Trainer: game type recommendation
+  var skatC=skat.map(cardName).join(', ');
+  trainerAnalyze('Ich habe das Reizen gewonnen (Reizwert: '+reizCurrentVal+'). Meine Hand: '+handStr(hands.du)+'. Skat: '+skatC+'. Welches Spiel soll ich ansagen und soll ich den Skat aufnehmen? Level: '+level+'.');
+}
+
+$('skat-aufnehmen-btn').addEventListener('click',function(){
+  if(skatTaken)return;
+  skatTaken=true;
+  hands.du=hands.du.concat(skat);skat=[];drueckenCards=[];phase='druecken';
+  $('gametype-area').classList.remove('visible');$('druecken-area').classList.add('visible');$('skat-area').classList.remove('visible');
+  renderPlayerHand();setStatus('Wähle 2 Karten zum Drücken');
+  trainerAnalyze('Ich habe den Skat aufgenommen. Neue Hand: '+handStr(hands.du)+'. Welche 2 Karten soll ich drücken und welches Spiel soll ich spielen? Level: '+level+'.');
+});
+
+$('hand-btn').addEventListener('click',function(){
+  handSpiel=!handSpiel;$('hand-btn').classList.toggle('active',handSpiel);
+  if(handSpiel){$('skat-aufnehmen-btn').style.display='none';trainerAnalyze('Ich überlege Hand zu spielen. Meine Hand: '+handStr(hands.du)+'. Ist das sinnvoll? Reizwert war '+reizCurrentVal+'.');}
+  else{$('skat-aufnehmen-btn').style.display='';}
+});
+
+$('schneider-btn').addEventListener('click',function(){schneiderAngesagt=!schneiderAngesagt;$('schneider-btn').classList.toggle('active',schneiderAngesagt);});
+$('schwarz-btn').addEventListener('click',function(){schwarzAngesagt=!schwarzAngesagt;$('schwarz-btn').classList.toggle('active',schwarzAngesagt);});
+
+document.querySelectorAll('.gt-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.gt-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');chosenGameType=btn.dataset.game;renderPlayerHand();updateInfoBar();
+  });
+});
+
+$('confirm-game-btn').addEventListener('click',function(){
+  if(!chosenGameType){showTrainer('⚠️ Bitte zuerst ein Spiel wählen!');return;}
+  if(phase==='druecken'){showTrainer('⚠️ Erst 2 Karten drücken!');return;}
+  currentGame={type:chosenGameType,hand:handSpiel,schneider:schneiderAngesagt,schwarz:schwarzAngesagt};
+  updateInfoBar();
+  $('gametype-area').classList.remove('visible');$('skat-area').classList.remove('visible');
+  // Trainer: validate game choice
+  var handDesc=handStr(hands.du);
+  var mat=countMatadors(hands.du.concat(skat),chosenGameType);
+  var gv=gameValue(chosenGameType,mat,handSpiel,false,false,schneiderAngesagt,schwarzAngesagt);
+  trainerAnalyze('Ich habe '+GAME_NAMES[chosenGameType]+(handSpiel?' Hand':'')+(schneiderAngesagt?' Schneider angesagt':'')+(schwarzAngesagt?' Schwarz angesagt':'')+' angesagt. Spielwert: '+gv+'. Reizwert: '+reizCurrentVal+'. Meine Hand: '+handDesc+'. War das die richtige Wahl? Level: '+level+'.');
+  setTimeout(startPlaying,1200);
+});
+
+$('druecken-btn').addEventListener('click',function(){
+  if(drueckenCards.length!==2){showTrainer('⚠️ Genau 2 Karten auswählen!');return;}
+  var removed=[];
+  hands.du=hands.du.filter(function(c){if(drueckenCards.indexOf(c.id)>=0){removed.push(c);return false;}return true;});
+  skat=removed;drueckenCards=[];phase='gametype';
+  $('druecken-area').classList.remove('visible');$('gametype-area').classList.add('visible');
+  renderPlayerHand();
+  trainerAnalyze('Ich habe '+skat.map(cardName).join(' und ')+' gedrückt. Meine Hand jetzt: '+handStr(hands.du)+'. War das sinnvoll? Welches Spiel empfiehlst du? Level: '+level+'.');
+});
+
+// ── AI GAME CHOICE (taktisch) ──
+function aiChoosesGame(player){
+  var hand=hands[player].concat(skat);
+  var best=chooseBestGame(hand,[]);
+  // Press 2 non-trump low-value cards, or if null: press high cards
+  var nonTrump,pressed;
+  if(best==='null'){
+    // For null: press highest cards (10s, Aces) to avoid taking tricks
+    nonTrump=hand.filter(function(c){return !isJack(c);}).sort(function(a,b){return cardPts(b)-cardPts(a);});
+    pressed=nonTrump.slice(0,2);
+  } else {
+    nonTrump=hand.filter(function(c){return !isTrump(c,best);}).sort(function(a,b){return cardPts(a)-cardPts(b);});
+    var trumpCards=hand.filter(function(c){return isTrump(c,best);});
+    if(nonTrump.length>=2)pressed=nonTrump.slice(0,2);
+    else if(nonTrump.length===1)pressed=[nonTrump[0],trumpCards.sort(function(a,b){return cardPts(a)-cardPts(b);})[0]];
+    else pressed=trumpCards.sort(function(a,b){return cardPts(a)-cardPts(b);}).slice(0,2);
+  }
+  var pressedIds=pressed.map(function(c){return c.id;});
+  hands[player]=hand.filter(function(c){return pressedIds.indexOf(c.id)<0;});
+  skat=pressed;
+  currentGame={type:best,hand:false,schneider:false,schwarz:false};
+  updateInfoBar();
+  $(player==='vorhand'?'game-vorhand':'game-mittelhand').textContent=GAME_SYMS[best]+' '+GAME_NAMES[best];
+  setStatus((player==='vorhand'?'Vorhand':'Mittelhand')+' spielt '+GAME_NAMES[best]);
+  startPlaying();
+}
+
+// ── PLAYING ──
+function startPlaying(){
+  phase='playing';
+  tricks={vorhand:[],mittelhand:[],du:[]};trickPoints={vorhand:0,mittelhand:0,du:0};
+  currentTrick=[];lastTrick=[];lastTrickWinner=null;playedCards=[];
+  $('druecken-area').classList.remove('visible');$('gametype-area').classList.remove('visible');$('skat-area').classList.remove('visible');
+  $('last-stich-btn').style.display='none';$('stich-info').textContent='';
+  currentPlayer='vorhand';
+  renderAll();
+  setStatus('Spiel: '+GAME_NAMES[currentGame.type],declarer==='du'?'Du spielst allein!':(declarer==='vorhand'?'Vorhand':'Mittelhand')+' spielt allein');
+  if(currentPlayer!=='du')setTimeout(aiPlay,900);
+  else setStatus('Du bist dran – wähle eine Karte');
+}
+
+function onCardClick(card){
+  if(phase==='druecken'){
+    var idx=drueckenCards.indexOf(card.id);
+    if(idx>=0)drueckenCards.splice(idx,1);
+    else if(drueckenCards.length<2)drueckenCards.push(card.id);
+    renderPlayerHand();return;
+  }
+  if(phase!=='playing'||currentPlayer!=='du')return;
+  if(!isLegalPlay(card,hands.du,currentTrick,currentGame.type)){
+    showTrainer('⚠️ '+getLegalHint(card,hands.du,currentTrick,currentGame.type));return;
+  }
+  playCard('du',card);
+}
+
+function isLegalPlay(card,hand,trick,gt){
+  if(trick.length===0)return true;
+  var led=trick[0].card;
+  if(gt==='null'){
+    // In Null: must follow suit if possible; no trump
+    var mySuit=hand.filter(function(c){return c.suit===led.suit;});
+    if(mySuit.length>0)return card.suit===led.suit;
+    return true;
+  }
+  var ledT=isTrump(led,gt);
+  var myT=hand.filter(function(c){return isTrump(c,gt);});
+  var myS=hand.filter(function(c){return !isTrump(c,gt)&&c.suit===led.suit;});
+  if(ledT){if(myT.length>0)return isTrump(card,gt);return true;}
+  else{if(myS.length>0)return !isTrump(card,gt)&&card.suit===led.suit;return true;}
+}
+
+function getLegalHint(card,hand,trick,gt){
+  if(trick.length===0)return '';
+  var led=trick[0].card;
+  if(gt==='null')return 'Beim Null musst du '+SUIT_SYM[led.suit]+' bedienen (kein Trumpf!)';
+  if(isTrump(led,gt))return 'Du musst Trumpf bedienen!';
+  return 'Du musst '+SUIT_SYM[led.suit]+' bedienen!';
+}
+
+function playCard(player,card){
+  hands[player]=hands[player].filter(function(c){return c.id!==card.id;});
+  currentTrick.push({player:player,card:card});
+  playedCards.push({player:player,card:card});
+  renderAll();
+  if(currentTrick.length===3){setTimeout(resolveTrick,900);}
+  else{
+    currentPlayer=getNext(player);updateInfoBar();
+    if(currentPlayer!=='du')setTimeout(aiPlay,700);
+    else setStatus('Du bist dran!');
+  }
+}
+
+function getNext(p){var o=['vorhand','mittelhand','du'];return o[(o.indexOf(p)+1)%3];}
+
+// ── TACTICAL AI ──
+function aiPlay(){
+  if(phase!=='playing')return;
+  var hand=hands[currentPlayer];if(hand.length===0)return;
+  var legal=hand.filter(function(c){return isLegalPlay(c,hand,currentTrick,currentGame.type);});
+  if(legal.length===0)legal=hand;
+  var card=aiChooseCardTactical(currentPlayer,legal,currentTrick,currentGame.type);
+  playCard(currentPlayer,card);
+}
+
+function aiChooseCardTactical(player,legal,trick,gt){
+  var isDecl=player===declarer;
+  var isNull=gt==='null';
+
+  // NULL GAME: Declarer wants to LOSE all tricks; defenders want declarer to WIN a trick
+  if(isNull){
+    if(isDecl){
+      // Declarer: play lowest card that can't win the trick
+      if(trick.length===0){
+        // Lead lowest card in shortest suit
+        return legal.sort(function(a,b){
+          var ord=['7','8','9','10','B','D','K','A'];
+          return ord.indexOf(a.rank)-ord.indexOf(b.rank);
+        })[0];
+      }
+      var ledCard=trick[0].card;
+      var canFollow=legal.filter(function(c){return c.suit===ledCard.suit;});
+      if(canFollow.length){
+        // Play lowest of that suit hoping not to win
+        var ord=['7','8','9','10','B','D','K','A'];
+        return canFollow.sort(function(a,b){return ord.indexOf(a.rank)-ord.indexOf(b.rank);})[0];
+      }
+      // Can't follow suit - play lowest card
+      var ord=['7','8','9','10','B','D','K','A'];
+      return legal.sort(function(a,b){return ord.indexOf(a.rank)-ord.indexOf(b.rank);})[0];
+    } else {
+      // Defender: try to force declarer to win a trick
+      var winner=getTrickWinner(trick,gt);
+      if(trick.length===0){
+        // Lead high card in a suit declarer might have to win
+        var ord=['7','8','9','10','B','D','K','A'];
+        return legal.sort(function(a,b){return ord.indexOf(b.rank)-ord.indexOf(a.rank);})[0];
+      }
+      var ledCard=trick[0].card;
+      var canFollow=legal.filter(function(c){return c.suit===ledCard.suit;});
+      if(canFollow.length){
+        // Try to play high enough to make declarer be forced to play higher later
+        // But if declarer is already winning, play low
+        if(winner.player===declarer){
+          // Declarer already winning this trick - play low, we want declarer to win
+          var ord=['7','8','9','10','B','D','K','A'];
+          return canFollow.sort(function(a,b){return ord.indexOf(a.rank)-ord.indexOf(b.rank);})[0];
+        }
+        // We're winning - try to let declarer win by playing high below current winner
+        var ord=['7','8','9','10','B','D','K','A'];
+        return canFollow.sort(function(a,b){return ord.indexOf(b.rank)-ord.indexOf(a.rank);})[0];
+      }
+      return legal.sort(function(a,b){return cardPts(b)-cardPts(a);})[0];
+    }
+  }
+
+  // SUIT GAME / GRAND
+  if(trick.length===0){
+    if(isDecl){
+      // Lead highest trump to pull enemy trumps
+      var trumps=legal.filter(function(c){return isTrump(c,gt);});
+      if(trumps.length>=3){return trumps.sort(function(a,b){return trumpRank(b,gt)-trumpRank(a,gt);})[0];}
+      // Lead aces in side suits
+      var aces=legal.filter(function(c){return c.rank==='A'&&!isTrump(c,gt);});
+      if(aces.length)return aces[0];
+      return trumps.length?trumps.sort(function(a,b){return trumpRank(b,gt)-trumpRank(a,gt);})[0]:legal[0];
+    } else {
+      // Defender: lead in a suit where we have the ace
+      var aces=legal.filter(function(c){return c.rank==='A'&&!isTrump(c,gt);});
+      if(aces.length)return aces[0];
+      // Lead tens if safe
+      var tens=legal.filter(function(c){return c.rank==='10'&&!isTrump(c,gt);});
+      if(tens.length)return tens[0];
+      return legal.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
+    }
+  }
+
+  var winner=getTrickWinner(trick,gt);
+  var winTeam=isDecl===(winner.player===declarer);
+
+  if(winTeam){
+    if(!isDecl){
+      // Team winning: play high value card to maximize points
+      return legal.sort(function(a,b){return cardPts(b)-cardPts(a);})[0];
+    }
+    // Declarer winning: play low to save good cards
+    return legal.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
+  }
+
+  // Enemy winning: try to beat
+  var canBeat=legal.filter(function(c){return beats(c,winner.card,gt);});
+  if(canBeat.length){
+    // Beat with lowest winning card
+    return canBeat.sort(function(a,b){
+      var aT=isTrump(a,gt),bT=isTrump(b,gt);
+      if(aT&&!bT)return 1; if(!aT&&bT)return -1; // prefer non-trump if possible
+      return cardPts(a)-cardPts(b);
+    })[0];
+  }
+  // Can't beat: discard lowest
+  return legal.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
+}
+
+function resolveTrick(){
+  var winner=getTrickWinner(currentTrick,currentGame.type);
+  lastTrick=currentTrick.slice();lastTrickWinner=winner.player;
+  tricks[winner.player]=tricks[winner.player].concat(currentTrick.map(function(e){return e.card;}));
+  var pts=currentTrick.reduce(function(s,e){return s+cardPts(e.card);},0);
+  trickPoints[winner.player]+=pts;
+  var wname=winner.player==='du'?'Du':winner.player==='vorhand'?'Vorhand':'Mittelhand';
+  $('stich-info').textContent=wname+' gewinnt den Stich';
+  $('last-stich-btn').style.display='block';
+
+  // KI Trainer: analyze this trick
+  var duEntry=lastTrick.find(function(e){return e.player==='du';});
+  if(duEntry){
+    var played=lastTrick.map(function(e){return(e.player==='du'?'Ich':e.player==='vorhand'?'Vorhand':'Mittelhand')+': '+cardName(e.card);}).join(' | ');
+    var remaining=handStr(hands.du);
+    var declarerPtsSoFar=trickPoints[declarer];
+    var gt=currentGame.type;
+    var prompt='Skatspiel: '+GAME_NAMES[gt]+'. Alleinspieler: '+(declarer==='du'?'Ich':declarer==='vorhand'?'Vorhand':'Mittelhand')+'. Level: '+level+'. Dieser Stich: '+played+'. Gewinner: '+wname+'. Ich habe noch '+hands.du.length+' Karten: '+remaining+'. Alleinspieler hat bisher '+(declarer==='du'?trickPoints.du:(trickPoints.vorhand+trickPoints.mittelhand))+' Augen. War meine Karte ('+cardName(duEntry.card)+') sinnvoll? Was wäre besser gewesen und warum? Berücksichtige den '+(gt==='null'?'Null-Spielzweck (kein Stich machen)':gt==='grand'?'Grand (nur Buben sind Trumpf)':'Spielverlauf')+'.';
+    trainerAnalyze(prompt);
+  }
+
+  currentTrick=[];currentPlayer=winner.player;
+  if(hands.vorhand.length===0&&hands.mittelhand.length===0&&hands.du.length===0){setTimeout(endRound,1200);return;}
+  setTimeout(function(){$('stich-info').textContent='';renderAll();if(currentPlayer!=='du')setTimeout(aiPlay,700);else setStatus('Du bist dran!');},1100);
+}
+
+// ── END ROUND ──
+function endRound(){
+  phase='result';
+  var skatPts=skat.reduce(function(s,c){return s+cardPts(c);},0);
+  trickPoints[declarer]+=skatPts;
+  var dPts=trickPoints[declarer],oPts=120-dPts;
+  var won=false,schneider=false,schwarz=false;
+  if(currentGame.type==='null'){won=tricks[declarer].length===0;}
+  else{won=dPts>=61;schneider=dPts>=90||oPts>=90;schwarz=dPts===120||oPts===120;}
+  var mat=countMatadors(hands[declarer].concat(skat),currentGame.type);
+  var gVal=gameValue(currentGame.type,mat,currentGame.hand,schneider&&won,schwarz&&won,currentGame.schneider,currentGame.schwarz);
+  var bidMet=reizCurrentVal===0||gVal>=reizCurrentVal;
+  if(!bidMet)won=false;
+  var points=won?gVal:-2*gVal;
+  scores[declarer]+=points;
+  var dname=declarer==='du'?'Du':declarer==='vorhand'?'Vorhand':'Mittelhand';
+  var rt='🃏 Spiel: '+GAME_NAMES[currentGame.type]+(currentGame.hand?' Hand':'')+'\n';
+  rt+='👤 Alleinspieler: '+dname+'\n';
+  rt+='🎯 Augen: '+dPts+' (Allein) / '+oPts+' (Gegen)\n';
+  if(skatPts>0)rt+='📦 Skat: +'+skatPts+' Pkt\n';
+  rt+='📊 Spielwert: '+gVal;
+  if(!bidMet)rt+='\n⚠️ Überreizt! (Reizwert: '+reizCurrentVal+')';
+  if(schneider&&won)rt+='\n✂️ Schneider!';
+  if(schwarz&&won)rt+='\n⚫ Schwarz!';
+  rt+='\n\n'+(won?'✅ Gewonnen! +'+points+' Punkte':'❌ Verloren! '+points+' Punkte');
+  $('result-title').textContent=won?'🏆 Gewonnen!':'😔 Verloren';
+  $('result-text').textContent=rt;
+  $('round-result').classList.add('visible');
+  renderScores();
+  // Final round analysis
+  var prompt='Gesamtanalyse der Runde: '+GAME_NAMES[currentGame.type]+'. Alleinspieler: '+(declarer==='du'?'Ich':declarer==='vorhand'?'Vorhand':'Mittelhand')+'. Ergebnis: '+(won?'Gewonnen':'Verloren')+'. Augen: '+dPts+' (Alleinspieler). Spielwert: '+gVal+'. '+(bidMet?'':'Überreizt! ')+' Level: '+level+'. Bitte kurze Gesamtbewertung und wichtigster Tipp.';
+  trainerAnalyze(prompt);
+}
+
+function nextRound(){dealerIdx=(dealerIdx+1)%3;startNewRound();}
+
+function startNewRound(){
+  phase='idle';currentTrick=[];currentGame=null;declarer=null;
+  reizCurrentVal=0;reizCurrentIdx=0;drueckenCards=[];skatTaken=false;
+  lastTrick=[];lastTrickWinner=null;reizQueue=[];reizQueueRunning=false;playedCards=[];
+  hideAll();$('last-stich-btn').style.display='none';$('stich-info').textContent='';
+  $('game-vorhand').textContent='';$('game-mittelhand').textContent='';$('reiz-log').innerHTML='';
+  deal();renderAll();renderScores();updateInfoBar();
+  setStatus('Karten ausgeteilt – Reizen beginnt...');
+  setTimeout(startReizen,800);
+}
+
+// ── SORT ──
+$('sort-btn').addEventListener('click',function(){
+  sortDir*=-1;$('sort-btn').textContent=sortDir===1?'⇄ ↑ H→N':'⇄ ↓ N→H';renderPlayerHand();
+});
+
+// ── LAST STICH ──
+$('last-stich-btn').addEventListener('click',function(){
+  if(!lastTrick||lastTrick.length===0)return;
+  var el=$('last-stich-cards');el.innerHTML='';
+  lastTrick.forEach(function(entry){
+    var ce=renderCardEl(entry.card);
+    var lbl=document.createElement('div');lbl.style.cssText='font-size:9px;color:#5a7a50;text-align:center;margin-top:3px';
+    lbl.textContent=entry.player==='du'?'Du':entry.player==='vorhand'?'Vorhand':'Mittelhand';
+    var w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+    w.appendChild(ce);w.appendChild(lbl);el.appendChild(w);
+  });
+  var pts=lastTrick.reduce(function(s,e){return s+cardPts(e.card);},0);
+  var wname=lastTrickWinner==='du'?'Du':lastTrickWinner==='vorhand'?'Vorhand':'Mittelhand';
+  $('last-stich-winner').textContent='Gewonnen: '+wname+(pts>0?' ('+pts+' Punkte)':'');
+  $('last-stich-overlay').classList.add('visible');
+});
+$('close-last-stich').addEventListener('click',function(){$('last-stich-overlay').classList.remove('visible');});
+
+// ── BUTTONS ──
+$('new-game-btn').addEventListener('click',function(){scores={vorhand:0,mittelhand:0,du:0};renderScores();startNewRound();});
+$('level-btn').addEventListener('click',function(){$('level-screen').classList.remove('hidden');});
+$('reiz-ja').addEventListener('click',playerReizJa);
+$('reiz-nein').addEventListener('click',playerReizNein);
+
+function setLevel(l){
+  level=l;$('level-screen').classList.add('hidden');
+  var n={anfaenger:'🌱 Anfänger',fortgeschritten:'⚡ Fortgeschrittener',experte:'🏆 Experte'};
+  $('header-level').textContent=n[l]||l;
+  startNewRound();
+}
+
+renderScores();updateInfoBar();
+</script>
+</body>
+</html>
   $('sort-btn').textContent=sortDir===1?'⇄ ↑ Hoch-Niedrig':'⇄ ↓ Niedrig-Hoch';
   renderPlayerHand();
 });
@@ -1241,32 +2365,7 @@ function getReizWinHint(val){
 }
 function getGameTypeHint(hand,skat){
   var best=chooseBestGame(hand,skat);
-  var combined=hand.concat(skat);
-  var mat=countMatadors(combined,best);
-  var val=BASE_VAL[best]*(mat+1);
-  if(level==='anfaenger') return '💡 Welche Farbe hast du am häufigsten? Das ist dein Trumpf! Empfehlung: '+GAME_NAMES[best]+' (ca. '+val+' Pkt)';
-  if(level==='fortgeschritten') return '🎯 Empfehlung: '+GAME_NAMES[best]+' ('+val+' Pkt)';
-  return '📊 Optimum: '+GAME_NAMES[best]+' | Wert: '+val;
-}
-function getDrueckenHint(hand){
-  if(level==='anfaenger') return '💡 Drücke 2 Karten die wenig bringen – am besten punktelose Fehlfarben. Keine Trümpfe drücken!';
-  if(level==='fortgeschritten') return '🎯 Drücke punktearme Fehlfarben oder schaffe blanke Farben zum Abwerfen.';
-  return '📊 Optimales Drücken: Fehlfarben bereinigen, Punkte sichern.';
-}
-function getPlayStartHint(){
-  if(declarer==='du'){
-    if(level==='anfaenger') return '🎮 Du spielst allein! Ziel: 61+ Augen. Tipp: Erst alle Trümpfe einziehen, dann Asse kassieren.';
-    if(level==='fortgeschritten') return '🎯 Alleinspieler: Trumpf ziehen, dann Fehlfarben aufmachen!';
-    return '📊 Allein. Trümpfe: '+hands.du.filter(function(c){return isTrump(c,currentGame.type);}).length;
-  }
-  if(level==='anfaenger') return '🤝 Gegenpartei! Ihr braucht zusammen 60+ Augen. Hohe Karten einbringen und Trumpf sparen!';
-  if(level==='fortgeschritten') return '🎯 Gegenspieler: Fehlfarben anschneiden, Abwürfe nutzen!';
-  return '📊 Gegenspieler. Ziel: 60 Augen für die Gegenpartei.';
-}
-function getEndHint(won,pts,gt,decl,bidMet,gVal){
-  var isP=decl==='du';
-  if(!bidMet&&isP) return '⚠️ Überreizt! Spielwert '+gVal+' war unter dem Reizwert. Nächstes Mal konservativer reizen!';
-  if(isP&&won&&pts>=90) return '🌟 Schneider! Hervorragend – '+pts+' Augen!';
+urn '🌟 Schneider! Hervorragend – '+pts+' Augen!';
   if(isP&&won) return '✅ Gut gespielt! '+pts+' Augen – Sieg!';
   if(isP&&!won) return level==='anfaenger'?'😔 Verloren ('+pts+' Augen). Tipp: Erst Trümpfe einziehen, dann Asse!':'❌ '+pts+' Augen. Trumpfmanagement und Stichplanung verbessern.';
   if(!isP&&won) return '🤝 Gegenpartei hat gewonnen! Gut verteidigt.';
