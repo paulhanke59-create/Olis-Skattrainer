@@ -17,133 +17,124 @@ body {
   position: fixed; inset: 0;
   background: radial-gradient(ellipse at 50% 0%, #1a4a1a 0%, #0d2b0d 50%, #060f06 100%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 30px 24px; z-index: 999; text-align: center;
+  padding: 30px 24px; z-index: 999; text-align: center; overflow-y: auto;
 }
 #level-screen.hidden { display: none; }
-#level-logo { font-size: 56px; margin-bottom: 12px; }
-#level-title { font-size: 30px; color: #d4a83c; font-style: italic; margin-bottom: 4px; }
-#level-sub { font-size: 11px; color: #5a7a50; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
+#level-logo { font-size: 52px; margin-bottom: 10px; }
+#level-title { font-size: 28px; color: #d4a83c; font-style: italic; margin-bottom: 4px; }
+#level-sub { font-size: 10px; color: #5a7a50; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
 .level-btn {
-  width: 100%; padding: 16px; border-radius: 14px; border: 1px solid rgba(212,168,60,0.3);
-  background: rgba(212,168,60,0.08); color: #e8dcc0; font-size: 15px; font-family: Georgia, serif;
+  width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(212,168,60,0.3);
+  background: rgba(212,168,60,0.08); color: #e8dcc0; font-size: 14px; font-family: Georgia, serif;
   cursor: pointer; margin-bottom: 10px; text-align: left;
 }
 .level-btn .level-name { color: #d4a83c; font-weight: bold; display: block; margin-bottom: 3px; }
-.level-btn .level-desc { font-size: 12px; color: #7a9a70; line-height: 1.5; }
+.level-btn .level-desc { font-size: 11px; color: #7a9a70; line-height: 1.5; }
 
 /* HEADER */
 #header {
   background: rgba(6,15,6,0.97); border-bottom: 1px solid rgba(212,168,60,0.2);
-  padding: 8px 12px; position: sticky; top: 0; z-index: 100;
-  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; gap: 6px;
 }
-#header-title { font-style: italic; font-size: 17px; color: #d4a83c; flex: 1; }
-#header-level { font-size: 9px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; }
-.hbtn { background: rgba(212,168,60,0.1); border: 1px solid rgba(212,168,60,0.25); border-radius: 8px; padding: 5px 9px; color: #d4a83c; font-size: 11px; cursor: pointer; font-family: Georgia,serif; }
+#header-title { font-style: italic; font-size: 16px; color: #d4a83c; flex: 1; }
+#header-level { font-size: 8px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; }
+.hbtn { background: rgba(212,168,60,0.1); border: 1px solid rgba(212,168,60,0.25); border-radius: 7px; padding: 4px 8px; color: #d4a83c; font-size: 11px; cursor: pointer; font-family: Georgia,serif; white-space: nowrap; }
 
 /* SCORE BAR */
 #score-bar {
   background: rgba(0,0,0,0.45); border-bottom: 1px solid rgba(212,168,60,0.15);
-  padding: 6px 10px; display: flex; justify-content: space-around;
+  padding: 5px 8px; display: flex; justify-content: space-around;
 }
 .sc-cell { text-align: center; }
-.sc-name { font-size: 9px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; }
-.sc-val { font-size: 18px; color: #d4a83c; font-weight: bold; }
+.sc-name { font-size: 8px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; }
+.sc-val { font-size: 17px; color: #d4a83c; font-weight: bold; }
 .sc-you { color: #7ab87a; }
 
-/* GAME INFO BAR */
+/* INFO BAR */
 #info-bar {
   background: rgba(0,0,0,0.55); border-bottom: 1px solid rgba(80,160,80,0.2);
-  padding: 6px 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 4px;
+  padding: 5px 8px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 3px;
 }
-.ib-cell { text-align: center; min-width: 60px; }
-.ib-label { font-size: 8px; color: #4a6a40; letter-spacing: 1px; text-transform: uppercase; }
-.ib-val { font-size: 14px; color: #d4a83c; font-weight: bold; line-height: 1.2; }
+.ib-cell { text-align: center; min-width: 55px; }
+.ib-label { font-size: 7px; color: #4a6a40; letter-spacing: 1px; text-transform: uppercase; }
+.ib-val { font-size: 12px; color: #d4a83c; font-weight: bold; line-height: 1.3; }
 .ib-val.green { color: #7ab87a; }
 .ib-val.red { color: #e07060; }
 .ib-val.blue { color: #70a8e0; }
 
-/* TABLE LAYOUT */
-#table {
-  padding: 8px 10px; display: flex; flex-direction: column; gap: 6px;
+/* REIZ LOG (animated, step by step) */
+#reiz-log-box {
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2);
+  border-radius: 10px; padding: 8px 10px; display: none; max-height: 120px; overflow-y: auto;
 }
+#reiz-log-box.visible { display: block; }
+#reiz-log-title { font-size: 9px; color: #d4a83c; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+.reiz-log-line { font-size: 11px; color: #9ab890; line-height: 1.6; }
+.reiz-log-line.pass { color: #e07060; }
+.reiz-log-line.bid { color: #d4a83c; }
+.reiz-log-line.hold { color: #7ab87a; }
+
+/* TABLE */
+#table { padding: 7px 8px; display: flex; flex-direction: column; gap: 6px; }
 
 /* OPPONENTS ROW */
-#opps-row {
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;
-}
+#opps-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; }
 .opp-box {
-  flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(212,168,60,0.15);
-  border-radius: 12px; padding: 8px 6px; text-align: center; max-width: 120px;
+  flex: 1; border-radius: 12px; padding: 7px 5px; text-align: center; max-width: 115px;
+  border: 2px solid rgba(212,168,60,0.15); background: rgba(0,0,0,0.3); transition: border-color 0.3s, background 0.3s;
 }
-.opp-name {
-  font-size: 9px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px;
+.opp-box.active-player {
+  border-color: #f0c040 !important; background: rgba(212,168,60,0.18) !important;
+  box-shadow: 0 0 14px rgba(212,168,60,0.5);
 }
-.opp-role { font-size: 10px; color: #d4a83c; margin-bottom: 4px; }
-.opp-cards-row { display: flex; gap: 2px; justify-content: center; flex-wrap: wrap; }
-.mini-card {
-  width: 12px; height: 18px; border-radius: 2px;
-  background: linear-gradient(135deg,#1a4a8a,#0d2b5a);
-  border: 1px solid rgba(100,150,220,0.4);
-}
-.opp-badge {
-  display: inline-block; font-size: 10px; border-radius: 6px; padding: 1px 5px; margin-top: 3px;
-}
+.opp-box.allein-box { border-color: rgba(80,200,80,0.5) !important; background: rgba(20,80,20,0.4) !important; }
+.opp-name { font-size: 9px; color: #5a7a50; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.opp-role { font-size: 9px; color: #d4a83c; margin-bottom: 3px; }
+.opp-game { font-size: 11px; color: #7ab87a; font-weight: bold; margin-bottom: 3px; min-height: 14px; }
+.opp-cards-row { display: flex; gap: 2px; justify-content: center; flex-wrap: wrap; margin-bottom: 3px; }
+.mini-card { width: 11px; height: 16px; border-radius: 2px; background: linear-gradient(135deg,#1a4a8a,#0d2b5a); border: 1px solid rgba(100,150,220,0.4); }
+.opp-badge { display: inline-block; font-size: 9px; border-radius: 5px; padding: 1px 4px; margin-top: 2px; }
 .badge-allein { background: rgba(80,180,80,0.25); color: #7ab87a; }
 .badge-gegen { background: rgba(100,100,120,0.25); color: #9090a0; }
-.badge-dran { background: rgba(212,168,60,0.3); color: #d4a83c; }
+.badge-dran { background: rgba(212,168,60,0.4); color: #fff; font-weight: bold; animation: pulse 0.8s infinite alternate; }
+@keyframes pulse { from { opacity:0.7; } to { opacity:1; } }
 
 /* CENTER PLAY AREA */
 #center-area {
-  background: rgba(0,60,0,0.35); border: 1px solid rgba(212,168,60,0.2);
-  border-radius: 14px; padding: 10px; min-height: 100px;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: rgba(0,50,0,0.4); border: 1px solid rgba(212,168,60,0.2);
+  border-radius: 12px; padding: 8px; min-height: 90px;
+  display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1;
 }
-#play-label { font-size: 9px; color: #4a7a40; letter-spacing: 2px; text-transform: uppercase; }
-#play-cards { display: flex; gap: 10px; justify-content: center; align-items: flex-end; min-height: 72px; }
-#stich-info { font-size: 11px; color: #7a9a70; text-align: center; }
-#last-stich-btn {
-  font-size: 10px; color: #5a7a50; border: 1px solid rgba(90,120,80,0.3);
-  border-radius: 8px; padding: 3px 8px; cursor: pointer; background: rgba(0,0,0,0.2);
-  font-family: Georgia, serif;
-}
+#play-label { font-size: 8px; color: #4a7a40; letter-spacing: 2px; text-transform: uppercase; }
+#play-cards { display: flex; gap: 8px; justify-content: center; align-items: flex-end; min-height: 68px; }
+#stich-info { font-size: 10px; color: #7a9a70; text-align: center; }
+#last-stich-btn { font-size: 9px; color: #5a7a50; border: 1px solid rgba(90,120,80,0.3); border-radius: 7px; padding: 2px 7px; cursor: pointer; background: rgba(0,0,0,0.2); font-family: Georgia, serif; display:none; }
 
 /* LAST STICH OVERLAY */
-#last-stich-overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-  z-index: 500; align-items: center; justify-content: center; flex-direction: column; gap: 16px;
-}
+#last-stich-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 500; align-items: center; justify-content: center; flex-direction: column; }
 #last-stich-overlay.visible { display: flex; }
-#last-stich-inner {
-  background: rgba(10,30,10,0.97); border: 1px solid rgba(212,168,60,0.3);
-  border-radius: 18px; padding: 20px; text-align: center; max-width: 340px; width: 90%;
-}
-#last-stich-title { font-size: 13px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
-#last-stich-cards { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; }
-#last-stich-winner { font-size: 13px; color: #7ab87a; margin-bottom: 14px; }
-#close-last-stich { padding: 10px 24px; border-radius: 10px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
+#last-stich-inner { background: rgba(10,30,10,0.97); border: 1px solid rgba(212,168,60,0.3); border-radius: 16px; padding: 18px; text-align: center; max-width: 320px; width: 92%; }
+#last-stich-title { font-size: 12px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+#last-stich-cards { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+#last-stich-winner { font-size: 12px; color: #7ab87a; margin-bottom: 12px; }
+#close-last-stich { padding: 9px 22px; border-radius: 9px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-family: Georgia,serif; font-size: 13px; cursor: pointer; }
 
 /* SKAT AREA */
-#skat-area {
-  background: rgba(0,0,0,0.3); border: 1px solid rgba(212,168,60,0.15);
-  border-radius: 10px; padding: 8px; display: none; text-align: center;
-}
+#skat-area { background: rgba(0,0,0,0.3); border: 1px solid rgba(212,168,60,0.15); border-radius: 9px; padding: 7px; display: none; text-align: center; }
 #skat-area.visible { display: block; }
-#skat-label { font-size: 9px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-#skat-cards { display: flex; gap: 8px; justify-content: center; }
+#skat-label { font-size: 8px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+#skat-cards { display: flex; gap: 7px; justify-content: center; }
 
 /* STATUS */
-#status-area { text-align: center; padding: 4px; }
+#status-area { text-align: center; padding: 3px; }
 #status-text { font-size: 12px; color: #5a7a50; letter-spacing: 1px; }
 #game-sub { font-size: 10px; color: #3a5a30; margin-top: 2px; }
 
-/* REIZEN */
-#reiz-area {
-  background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2);
-  border-radius: 12px; padding: 12px; display: none;
-}
+/* REIZEN (player input) */
+#reiz-area { background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2); border-radius: 11px; padding: 11px; display: none; }
 #reiz-area.visible { display: block; }
-#reiz-title { font-size: 11px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; text-align: center; }
+#reiz-title { font-size: 10px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; text-align: center; }
 #reiz-text { font-size: 13px; color: #e8dcc0; text-align: center; margin-bottom: 10px; line-height: 1.6; }
 #reiz-btns { display: flex; gap: 8px; justify-content: center; }
 .reiz-btn { padding: 10px 20px; border-radius: 10px; border: 1px solid; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
@@ -151,80 +142,66 @@ body {
 #reiz-nein { background: rgba(220,80,60,0.2); border-color: rgba(220,80,60,0.4); color: #e07060; }
 
 /* GAME TYPE */
-#gametype-area {
-  background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2);
-  border-radius: 12px; padding: 12px; display: none;
-}
+#gametype-area { background: rgba(0,0,0,0.4); border: 1px solid rgba(212,168,60,0.2); border-radius: 11px; padding: 11px; display: none; }
 #gametype-area.visible { display: block; }
-#gametype-title { font-size: 11px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
-#skat-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; }
-#gametype-btns { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 8px; }
-.gt-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.3); background: rgba(212,168,60,0.08); color: #e8dcc0; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
+#gametype-title { font-size: 10px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 7px; text-align: center; }
+#skat-row { display: flex; gap: 7px; justify-content: center; margin-bottom: 7px; flex-wrap: wrap; }
+#gametype-btns { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 7px; }
+.gt-btn { padding: 8px 11px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.3); background: rgba(212,168,60,0.08); color: #e8dcc0; font-family: Georgia,serif; font-size: 14px; cursor: pointer; }
 .gt-btn.active { background: rgba(212,168,60,0.3); border-color: #d4a83c; color: #d4a83c; }
-#skat-aufnehmen-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.4); background: rgba(212,168,60,0.12); color: #d4a83c; font-family: Georgia,serif; font-size: 12px; cursor: pointer; }
-#hand-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(100,180,100,0.3); background: rgba(100,180,100,0.08); color: #80d880; font-family: Georgia,serif; font-size: 12px; cursor: pointer; }
+#skat-aufnehmen-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(212,168,60,0.4); background: rgba(212,168,60,0.12); color: #d4a83c; font-family: Georgia,serif; font-size: 12px; cursor: pointer; }
+#hand-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(100,180,100,0.3); background: rgba(100,180,100,0.08); color: #80d880; font-family: Georgia,serif; font-size: 12px; cursor: pointer; }
 #hand-btn.active { background: rgba(100,180,100,0.25); }
-#extras-row { display: flex; gap: 5px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
-.extra-btn { padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(180,140,60,0.3); background: rgba(180,140,60,0.08); color: #c8a050; font-family: Georgia,serif; font-size: 11px; cursor: pointer; }
+#extras-row { display: flex; gap: 5px; justify-content: center; margin-bottom: 7px; flex-wrap: wrap; }
+.extra-btn { padding: 5px 9px; border-radius: 7px; border: 1px solid rgba(180,140,60,0.3); background: rgba(180,140,60,0.08); color: #c8a050; font-family: Georgia,serif; font-size: 11px; cursor: pointer; }
 .extra-btn.active { background: rgba(180,140,60,0.3); color: #d4a83c; }
-#confirm-game-btn { width: 100%; padding: 12px; border-radius: 10px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 14px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
+#confirm-game-btn { width: 100%; padding: 11px; border-radius: 9px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 14px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
 
 /* DRÜCKEN */
-#druecken-area {
-  background: rgba(60,30,0,0.35); border: 1px solid rgba(212,168,60,0.2);
-  border-radius: 12px; padding: 12px; display: none;
-}
+#druecken-area { background: rgba(60,30,0,0.35); border: 1px solid rgba(212,168,60,0.2); border-radius: 11px; padding: 11px; display: none; }
 #druecken-area.visible { display: block; }
-#druecken-title { font-size: 11px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; text-align: center; }
-#druecken-text { font-size: 12px; color: #9aaa80; text-align: center; margin-bottom: 8px; }
-#druecken-btn { width: 100%; padding: 11px; border-radius: 10px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-size: 13px; font-family: Georgia,serif; cursor: pointer; }
+#druecken-title { font-size: 10px; color: #d4a83c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; text-align: center; }
+#druecken-text { font-size: 12px; color: #9aaa80; text-align: center; margin-bottom: 7px; }
+#druecken-btn { width: 100%; padding: 10px; border-radius: 9px; background: rgba(212,168,60,0.2); border: 1px solid rgba(212,168,60,0.4); color: #d4a83c; font-size: 13px; font-family: Georgia,serif; cursor: pointer; }
 
 /* TRAINER */
-#trainer-box {
-  background: rgba(20,60,20,0.5); border: 1px solid rgba(100,180,80,0.3);
-  border-radius: 12px; padding: 10px 12px; display: none;
-}
+#trainer-box { background: rgba(20,60,20,0.5); border: 1px solid rgba(100,180,80,0.3); border-radius: 11px; padding: 9px 11px; display: none; }
 #trainer-box.visible { display: block; }
-#trainer-label { font-size: 9px; color: #60a050; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
-#trainer-text { font-size: 12px; color: #b0d8a0; line-height: 1.7; }
+#trainer-label { font-size: 8px; color: #60a050; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+#trainer-text { font-size: 12px; color: #b0d8a0; line-height: 1.7; white-space: pre-line; }
 
 /* ROUND RESULT */
-#round-result {
-  background: rgba(0,0,0,0.55); border: 1px solid rgba(212,168,60,0.3);
-  border-radius: 14px; padding: 14px; display: none; text-align: center;
-}
+#round-result { background: rgba(0,0,0,0.55); border: 1px solid rgba(212,168,60,0.3); border-radius: 13px; padding: 13px; display: none; text-align: center; }
 #round-result.visible { display: block; }
-#result-title { font-size: 15px; color: #d4a83c; margin-bottom: 8px; }
-#result-text { font-size: 12px; color: #b0b890; line-height: 1.8; margin-bottom: 12px; white-space: pre-line; }
-#result-btn { padding: 11px 28px; border-radius: 10px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 14px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
+#result-title { font-size: 15px; color: #d4a83c; margin-bottom: 7px; }
+#result-text { font-size: 12px; color: #b0b890; line-height: 1.8; margin-bottom: 11px; white-space: pre-line; text-align: left; }
+#result-btn { padding: 10px 26px; border-radius: 9px; background: linear-gradient(135deg,#d4a83c,#b88c28); border: none; color: #060f06; font-size: 14px; font-family: Georgia,serif; font-weight: bold; cursor: pointer; }
 
 /* CARDS */
 .card {
-  width: 44px; height: 66px; border-radius: 6px;
+  width: 42px; height: 64px; border-radius: 6px;
   background: #f5f0e0; border: 1.5px solid #c0a060;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: bold; cursor: pointer; flex-shrink: 0;
+  font-size: 11px; font-weight: bold; cursor: pointer; flex-shrink: 0;
   transition: transform 0.15s, box-shadow 0.15s; user-select: none;
 }
 .card.red { color: #c02020; }
 .card.black { color: #1a1a1a; }
-.card .c-rank { font-size: 13px; line-height: 1; }
-.card .c-suit { font-size: 15px; line-height: 1; }
-.card.selected { transform: translateY(-10px); box-shadow: 0 8px 20px rgba(212,168,60,0.6); border-color: #d4a83c; }
-.card.drueck-sel { transform: translateY(-10px); box-shadow: 0 8px 20px rgba(224,112,64,0.6); border-color: #e07040; }
-.card.back {
-  background: linear-gradient(135deg,#1a4a8a,#0d2b5a);
-  border-color: rgba(100,150,220,0.4); cursor: default; color: #5080c0; font-size: 20px;
-}
-.card.trick-card { width: 44px; height: 66px; }
+.card .c-rank { font-size: 12px; line-height: 1; }
+.card .c-suit { font-size: 14px; line-height: 1; }
+.card.selected { transform: translateY(-10px); box-shadow: 0 8px 18px rgba(212,168,60,0.6); border-color: #d4a83c; }
+.card.drueck-sel { transform: translateY(-10px); box-shadow: 0 8px 18px rgba(224,112,64,0.6); border-color: #e07040; }
+.card.back { background: linear-gradient(135deg,#1a4a8a,#0d2b5a); border-color: rgba(100,150,220,0.4); cursor: default; color: #5080c0; font-size: 18px; }
 
 /* PLAYER HAND */
-#hand-area { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 4px 0; }
-.hand-label {
-  font-size: 9px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase;
-  text-align: center; margin-bottom: 3px;
+#hand-area { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 3px 0; }
+.hand-label { font-size: 8px; color: #5a7a50; letter-spacing: 2px; text-transform: uppercase; text-align: center; margin-bottom: 3px; }
+
+/* ACTIVE PLAYER HIGHLIGHT on du-box */
+#du-box {
+  border-radius: 10px; padding: 4px 0; border: 2px solid transparent; transition: border-color 0.3s, background 0.3s;
 }
-.dran-indicator { color: #d4a83c; font-size: 11px; }
+#du-box.active-player { border-color: #f0c040; background: rgba(212,168,60,0.1); box-shadow: 0 0 14px rgba(212,168,60,0.4); }
 </style>
 </head>
 <body>
@@ -264,47 +241,26 @@ body {
     <div id="header-title">🃏 Oli's Skattrainer</div>
     <div id="header-level">Anfänger</div>
   </div>
+  <button class="hbtn" id="sort-btn">⇄ Sortierung</button>
   <button class="hbtn" id="new-game-btn">↺ Neu</button>
   <button class="hbtn" id="level-btn">Level</button>
 </div>
 
 <!-- SCORE BAR -->
 <div id="score-bar">
-  <div class="sc-cell">
-    <div class="sc-name">Vorhand</div>
-    <div class="sc-val" id="sc-vorhand">0</div>
-  </div>
-  <div class="sc-cell">
-    <div class="sc-name">Mittelhand</div>
-    <div class="sc-val" id="sc-mittelhand">0</div>
-  </div>
-  <div class="sc-cell">
-    <div class="sc-name sc-you">Du (Hinterhand)</div>
-    <div class="sc-val sc-you" id="sc-du">0</div>
-  </div>
+  <div class="sc-cell"><div class="sc-name">Vorhand</div><div class="sc-val" id="sc-vorhand">0</div></div>
+  <div class="sc-cell"><div class="sc-name">Mittelhand</div><div class="sc-val" id="sc-mittelhand">0</div></div>
+  <div class="sc-cell"><div class="sc-name sc-you">Du (Hinterh.)</div><div class="sc-val sc-you" id="sc-du">0</div></div>
 </div>
 
 <!-- INFO BAR -->
 <div id="info-bar">
-  <div class="ib-cell">
-    <div class="ib-label">Spiel</div>
-    <div class="ib-val" id="ib-spiel">–</div>
-  </div>
-  <div class="ib-cell">
-    <div class="ib-label">Alleinspieler</div>
-    <div class="ib-val green" id="ib-allein">–</div>
-  </div>
-  <div class="ib-cell">
-    <div class="ib-label">Vorhand</div>
-    <div class="ib-val blue" id="ib-vorhand">–</div>
-  </div>
-  <div class="ib-cell">
-    <div class="ib-label">Reizwert</div>
-    <div class="ib-val" id="ib-reiz">–</div>
-  </div>
+  <div class="ib-cell"><div class="ib-label">Spiel</div><div class="ib-val" id="ib-spiel">–</div></div>
+  <div class="ib-cell"><div class="ib-label">Alleinspieler</div><div class="ib-val green" id="ib-allein">–</div></div>
+  <div class="ib-cell"><div class="ib-label">Vorhand</div><div class="ib-val blue" id="ib-vorhand">–</div></div>
+  <div class="ib-cell"><div class="ib-label">Reizwert</div><div class="ib-val" id="ib-reiz">–</div></div>
 </div>
 
-<!-- MAIN TABLE -->
 <div id="table">
 
   <!-- OPPONENTS ROW -->
@@ -312,24 +268,31 @@ body {
     <div class="opp-box" id="box-vorhand">
       <div class="opp-name">Vorhand</div>
       <div class="opp-role" id="role-vorhand"></div>
+      <div class="opp-game" id="game-vorhand"></div>
       <div class="opp-cards-row" id="opp1-cards"></div>
       <div id="badge-vorhand"></div>
     </div>
 
-    <!-- CENTER PLAY AREA -->
     <div id="center-area">
       <div id="play-label">Tisch</div>
       <div id="play-cards"></div>
       <div id="stich-info"></div>
-      <button id="last-stich-btn" style="display:none">🔍 Letzter Stich</button>
+      <button id="last-stich-btn">🔍 Letzter Stich</button>
     </div>
 
     <div class="opp-box" id="box-mittelhand">
       <div class="opp-name">Mittelhand</div>
       <div class="opp-role" id="role-mittelhand"></div>
+      <div class="opp-game" id="game-mittelhand"></div>
       <div class="opp-cards-row" id="opp2-cards"></div>
       <div id="badge-mittelhand"></div>
     </div>
+  </div>
+
+  <!-- REIZ LOG -->
+  <div id="reiz-log-box">
+    <div id="reiz-log-title">🎯 Reizverlauf</div>
+    <div id="reiz-log"></div>
   </div>
 
   <!-- SKAT -->
@@ -344,12 +307,12 @@ body {
     <div id="game-sub"></div>
   </div>
 
-  <!-- REIZEN -->
+  <!-- REIZEN player input -->
   <div id="reiz-area">
-    <div id="reiz-title">🎯 Reizen</div>
+    <div id="reiz-title">🎯 Du bist dran – Reizen</div>
     <div id="reiz-text"></div>
     <div id="reiz-btns">
-      <button class="reiz-btn" id="reiz-ja">✓ Halte / Biete</button>
+      <button class="reiz-btn" id="reiz-ja">✓ Ja / Halte</button>
       <button class="reiz-btn" id="reiz-nein">✗ Passe</button>
     </div>
   </div>
@@ -379,7 +342,7 @@ body {
   <!-- DRÜCKEN -->
   <div id="druecken-area">
     <div id="druecken-title">♻ 2 Karten drücken</div>
-    <div id="druecken-text">Wähle 2 Karten zum Drücken (tippe drauf)</div>
+    <div id="druecken-text">Tippe 2 Karten an zum Drücken</div>
     <button id="druecken-btn">Ausgewählte Karten drücken</button>
   </div>
 
@@ -397,58 +360,65 @@ body {
   </div>
 
   <!-- PLAYER HAND -->
-  <div>
-    <div class="hand-label">Deine Hand (Hinterhand) <span class="dran-indicator" id="dran-du"></span></div>
+  <div id="du-box">
+    <div class="hand-label">Deine Hand (Hinterhand) <span id="dran-du" style="color:#d4a83c;font-size:10px"></span></div>
     <div id="hand-area"></div>
   </div>
 
-</div><!-- end #table -->
+</div>
 
 <script>
-var SUITS = ['kreuz','pik','herz','karo'];
-var RANKS = ['7','8','9','10','B','D','K','A'];
-var SUIT_SYM = { kreuz:'♣', pik:'♠', herz:'♥', karo:'♦' };
-var SUIT_COL = { kreuz:'black', pik:'black', herz:'red', karo:'red' };
-var CARD_PTS = { '7':0,'8':0,'9':0,'10':10,'B':2,'D':3,'K':4,'A':11 };
-var JACK_ORDER = ['kreuz','pik','herz','karo'];
-var BASE_VAL = { kreuz:12, pik:11, herz:10, karo:9, grand:24, null:23 };
-var REIZ_VALS = [18,20,22,23,24,27,30,33,35,36,40,44,45,46,48,50,54,55,59,60,63,66,70,72,77,80,81,84,88,90,96,99,100,108,110,117,120,121,126,130,132,135,140,143,144,150,154,165,168,176,180,187,192,198,204,216,240,264];
-var GAME_NAMES = { kreuz:'Kreuz ♣', pik:'Pik ♠', herz:'Herz ♥', karo:'Karo ♦', grand:'Grand 👑', null:'Null 0️⃣' };
-var GAME_SYMS = { kreuz:'♣', pik:'♠', herz:'♥', karo:'♦', grand:'👑', null:'0️⃣' };
+// ── CONSTANTS ──
+var SUITS=['kreuz','pik','herz','karo'];
+var RANKS=['7','8','9','10','B','D','K','A'];
+var SUIT_SYM={kreuz:'♣',pik:'♠',herz:'♥',karo:'♦'};
+var SUIT_COL={kreuz:'black',pik:'black',herz:'red',karo:'red'};
+var CARD_PTS={'7':0,'8':0,'9':0,'10':10,'B':2,'D':3,'K':4,'A':11};
+var JACK_ORDER=['kreuz','pik','herz','karo'];
+var BASE_VAL={kreuz:12,pik:11,herz:10,karo:9,grand:24,null:23};
+var REIZ_VALS=[18,20,22,23,24,27,30,33,35,36,40,44,45,46,48,50,54,55,59,60,63,66,70,72,77,80,81,84,88,90,96,99,100,108,110,117,120,121,126,130,132,135,140,143,144,150,154,165,168,176,180,187,192,198,204,216,240,264];
+var GAME_NAMES={kreuz:'Kreuz ♣',pik:'Pik ♠',herz:'Herz ♥',karo:'Karo ♦',grand:'Grand 👑',null:'Null 0️⃣'};
+var GAME_SYMS={kreuz:'♣',pik:'♠',herz:'♥',karo:'♦',grand:'👑',null:'0️⃣'};
 
-var level = 'anfaenger';
-var scores = {vorhand:0, mittelhand:0, du:0};
-var dealerIdx = 2; // 0=vorhand,1=mittelhand,2=du → du is dealer first (hinterhand)
-var hands = {vorhand:[], mittelhand:[], du:[]};
-var skat = [];
-var currentGame = null;
-var declarer = null;
-var currentTrick = [];
-var lastTrick = [];
-var lastTrickWinner = null;
-var tricks = {vorhand:[], mittelhand:[], du:[]};
-var trickPoints = {vorhand:0, mittelhand:0, du:0};
-var currentPlayer = null;
-var phase = 'idle';
-var reizCurrentVal = 0;
-var reizCurrentIdx = 0;
-var reizPassed = {vorhand:false, mittelhand:false, du:false};
-var handSpiel = false;
-var drueckenCards = [];
-var skatTaken = false;
-var schneiderAngesagt = false;
-var schwarzAngesagt = false;
-var chosenGameType = null;
-var maxBids = {};
-var reizResponder = 'vorhand';
-var reizPhase = 0;
+// ── STATE ──
+var level='anfaenger';
+var sortDir=1; // 1=links=hoch, -1=links=niedrig
+var scores={vorhand:0,mittelhand:0,du:0};
+var dealerIdx=2;
+var hands={vorhand:[],mittelhand:[],du:[]};
+var skat=[];
+var currentGame=null;
+var declarer=null;
+var currentTrick=[];
+var lastTrick=[];
+var lastTrickWinner=null;
+var tricks={vorhand:[],mittelhand:[],du:[]};
+var trickPoints={vorhand:0,mittelhand:0,du:0};
+var currentPlayer=null;
+var phase='idle';
+var reizCurrentVal=0;
+var reizCurrentIdx=0;
+var reizPassed={vorhand:false,mittelhand:false,du:false};
+var handSpiel=false;
+var drueckenCards=[];
+var skatTaken=false;
+var schneiderAngesagt=false;
+var schwarzAngesagt=false;
+var chosenGameType=null;
+var maxBids={};
+var reizResponder='vorhand';
+var reizPhase=0;
+var reizLog=[];
+// Reizen step-by-step queue
+var reizQueue=[];
+var reizQueueRunning=false;
 
-var $ = function(id){ return document.getElementById(id); };
+var $=function(id){return document.getElementById(id);};
 
 // ── CARD HELPERS ──
-function makeCard(r,s){ return {rank:r, suit:s, id:r+'_'+s}; }
-function cardPts(c){ return CARD_PTS[c.rank]||0; }
-function isJack(c){ return c.rank==='B'; }
+function makeCard(r,s){return{rank:r,suit:s,id:r+'_'+s};}
+function cardPts(c){return CARD_PTS[c.rank]||0;}
+function isJack(c){return c.rank==='B';}
 function isTrump(c,gt){
   if(gt==='null') return false;
   if(isJack(c)) return true;
@@ -459,11 +429,11 @@ function trumpRank(c,gt){
   if(gt==='null') return -1;
   if(isJack(c)) return 100+(3-JACK_ORDER.indexOf(c.suit));
   if(gt==='grand') return -1;
-  if(c.suit===gt){ var o=['7','8','9','D','K','10','A']; return o.indexOf(c.rank); }
+  if(c.suit===gt){var o=['7','8','9','D','K','10','A'];return o.indexOf(c.rank);}
   return -1;
 }
 function beats(c,o,gt){
-  var ct=isTrump(c,gt), ot=isTrump(o,gt);
+  var ct=isTrump(c,gt),ot=isTrump(o,gt);
   if(ct&&!ot) return true;
   if(!ct&&ot) return false;
   if(ct&&ot) return trumpRank(c,gt)>trumpRank(o,gt);
@@ -477,9 +447,8 @@ function getTrickWinner(trick,gt){
   return w;
 }
 function sortHand(hand,gt){
-  return hand.slice().sort(function(a,b){
-    var at=isTrump(a,gt)||gt===null, bt=isTrump(b,gt)||gt===null;
-    var atr=trumpRank(a,gt||'grand'), btr=trumpRank(b,gt||'grand');
+  var sorted=hand.slice().sort(function(a,b){
+    var atr=trumpRank(a,gt||'grand'),btr=trumpRank(b,gt||'grand');
     if(atr>=0&&btr>=0) return btr-atr;
     if(atr>=0) return -1;
     if(btr>=0) return 1;
@@ -488,17 +457,18 @@ function sortHand(hand,gt){
     var ord=['7','8','9','10','B','D','K','A'];
     return ord.indexOf(a.rank)-ord.indexOf(b.rank);
   });
+  return sortDir===-1 ? sorted.reverse() : sorted;
 }
 
 // ── DECK ──
 function createDeck(){
   var d=[];
-  SUITS.forEach(function(s){ RANKS.forEach(function(r){ d.push(makeCard(r,s)); }); });
+  SUITS.forEach(function(s){RANKS.forEach(function(r){d.push(makeCard(r,s));});});
   return d;
 }
 function shuffle(a){
   var b=a.slice();
-  for(var i=b.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=b[i]; b[i]=b[j]; b[j]=t; }
+  for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}
   return b;
 }
 function deal(){
@@ -512,17 +482,16 @@ function deal(){
 // ── MATADORS / GAME VALUE ──
 function countMatadors(hand,gt){
   if(gt==='null'||gt==='grand') return 0;
-  var hasKB=hand.some(function(c){ return c.rank==='B'&&c.suit==='kreuz'; });
-  var count=0;
-  var seq=['kreuz','pik','herz','karo'];
+  var hasKB=hand.some(function(c){return c.rank==='B'&&c.suit==='kreuz';});
+  var count=0,seq=['kreuz','pik','herz','karo'];
   if(hasKB){
     for(var i=0;i<seq.length;i++){
-      if(hand.some(function(c){ return c.rank==='B'&&c.suit===seq[i]; })) count++;
+      if(hand.some(function(c){return c.rank==='B'&&c.suit===seq[i];})) count++;
       else break;
     }
   } else {
     for(var i=0;i<seq.length;i++){
-      if(!hand.some(function(c){ return c.rank==='B'&&c.suit===seq[i]; })) count++;
+      if(!hand.some(function(c){return c.rank==='B'&&c.suit===seq[i];})) count++;
       else break;
     }
   }
@@ -530,301 +499,360 @@ function countMatadors(hand,gt){
 }
 function gameValue(gt,mat,hand,schn,schw,schnAns,schwAns){
   var base=BASE_VAL[gt]||0;
-  if(gt==='null'){
-    if(hand&&schw) return 59;
-    if(hand) return 35;
-    if(schw) return 46;
-    return 23;
-  }
+  if(gt==='null'){if(hand&&schw) return 59;if(hand) return 35;if(schw) return 46;return 23;}
   var mult=mat+1;
-  if(hand) mult++;
-  if(schn) mult++;
-  if(schnAns) mult++;
-  if(schw) mult++;
-  if(schwAns) mult++;
+  if(hand) mult++;if(schn) mult++;if(schnAns) mult++;if(schw) mult++;if(schwAns) mult++;
   return base*mult;
 }
+
+// ── IMPROVED AI BID CALCULATION ──
 function computeMaxBid(player){
   var hand=hands[player];
   var best=0;
   ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
     var mat=countMatadors(hand,gt);
+    // Count trumps for this game
+    var trumps=hand.filter(function(c){return isTrump(c,gt);});
+    var aces=hand.filter(function(c){return c.rank==='A'&&!isTrump(c,gt);});
+    // Only consider bidding if hand is strong enough
     var v=BASE_VAL[gt]*(mat+1);
-    if(v>best) best=v;
+    // Need at least 5 trumps or 4 trumps + 2 aces to play a suit game reliably
+    if(gt!=='grand'&&(trumps.length>=5||(trumps.length>=4&&aces.length>=1))){ if(v>best) best=v; }
+    if(gt==='grand'&&trumps.length>=4){ if(v>best) best=v; }
   });
+  // Null check: need very clean hand
+  var has10orA=hand.filter(function(c){return c.rank==='10'||c.rank==='A';});
+  if(has10orA.length===0) best=Math.max(best,23);
   return best;
 }
 
-// ── RENDER CARD ELEMENT ──
+function chooseBestGame(hand,skatCards){
+  var combined=hand.concat(skatCards||[]);
+  var best=null,bestVal=0;
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
+    var mat=countMatadors(combined,gt);
+    var trumps=combined.filter(function(c){return isTrump(c,gt);});
+    var aces=combined.filter(function(c){return c.rank==='A'&&!isTrump(c,gt);});
+    var v=BASE_VAL[gt]*(mat+1);
+    var viable=(gt!=='grand'&&trumps.length>=5)||(gt==='grand'&&trumps.length>=4)||(gt!=='grand'&&trumps.length>=4&&aces.length>=1);
+    if(viable&&v>bestVal){bestVal=v;best=gt;}
+  });
+  // Null check
+  var has10orA=combined.filter(function(c){return c.rank==='10'||c.rank==='A';});
+  if(!best&&has10orA.length===0){best='null';}
+  return best||'kreuz';
+}
+
+// ── RENDER ──
 function renderCardEl(card,opts){
   opts=opts||{};
   var el=document.createElement('div');
   el.className='card';
-  if(opts.back){ el.className+=' back'; el.textContent='🂠'; return el; }
+  if(opts.back){el.className+=' back';el.textContent='🂠';return el;}
   el.classList.add(SUIT_COL[card.suit]||'black');
-  var r=document.createElement('div'); r.className='c-rank'; r.textContent=card.rank;
-  var s=document.createElement('div'); s.className='c-suit'; s.textContent=SUIT_SYM[card.suit];
-  el.appendChild(r); el.appendChild(s);
+  var r=document.createElement('div');r.className='c-rank';r.textContent=card.rank;
+  var s=document.createElement('div');s.className='c-suit';s.textContent=SUIT_SYM[card.suit];
+  el.appendChild(r);el.appendChild(s);
   if(opts.selected) el.classList.add('selected');
   if(opts.drueck) el.classList.add('drueck-sel');
   return el;
 }
 
-// ── RENDER MINI CARDS (opponent) ──
-function renderMiniCards(containerId, count){
-  var el=$(containerId); el.innerHTML='';
-  for(var i=0;i<count;i++){
-    var m=document.createElement('div'); m.className='mini-card'; el.appendChild(m);
-  }
-}
-
-// ── UPDATE INFO BAR ──
-function updateInfoBar(){
-  // Spiel symbol
-  if(currentGame){
-    $('ib-spiel').textContent = GAME_SYMS[currentGame.type] + ' ' + (currentGame.hand?'Hand':'');
-  } else {
-    $('ib-spiel').textContent = phase==='reizen'?'🎯 Reizt':'–';
-  }
-  // Alleinspieler
-  if(declarer){
-    var dn = declarer==='du'?'👤 Du': declarer==='vorhand'?'Vorhand':'Mittelhand';
-    $('ib-allein').textContent = dn;
-    $('ib-allein').className = 'ib-val '+(declarer==='du'?'green':'red');
-  } else { $('ib-allein').textContent='–'; $('ib-allein').className='ib-val'; }
-  // Vorhand role
-  var roles = getRoles();
-  $('ib-vorhand').textContent = roles.vorhand;
-  // Reizwert
-  $('ib-reiz').textContent = reizCurrentVal>0 ? reizCurrentVal : '–';
-
-  // Opponent boxes: role badges
-  ['vorhand','mittelhand'].forEach(function(p){
-    var roleEl=$(p==='vorhand'?'role-vorhand':'role-mittelhand');
-    var badgeEl=$(p==='vorhand'?'badge-vorhand':'badge-mittelhand');
-    roleEl.textContent = roles[p];
-    // Badge
-    badgeEl.innerHTML='';
-    if(declarer===p){
-      var b=document.createElement('span'); b.className='opp-badge badge-allein'; b.textContent='Allein'; badgeEl.appendChild(b);
-    } else if(declarer&&declarer!==p){
-      var b=document.createElement('span'); b.className='opp-badge badge-gegen'; b.textContent='Gegen'; badgeEl.appendChild(b);
-    }
-    if(phase==='playing'&&currentPlayer===p&&currentTrick.length<3){
-      var b=document.createElement('span'); b.className='opp-badge badge-dran'; b.textContent='▶ dran'; badgeEl.appendChild(b);
-    }
-  });
-  // Du badge
-  $('dran-du').textContent = (phase==='playing'&&currentPlayer==='du') ? '▶ DU BIST DRAN' : '';
+function renderMiniCards(cid,count){
+  var el=$(cid);el.innerHTML='';
+  for(var i=0;i<count;i++){var m=document.createElement('div');m.className='mini-card';el.appendChild(m);}
 }
 
 function getRoles(){
-  // Rollen: Vorhand=links vom Geber, Mittelhand=rechts vom Geber... 
-  // Dealer: 0=Vorhand,1=Mittelhand,2=du
-  var roleNames = {0:'Geber', 1:'Vorhand', 2:'Mittelhand'};
-  // Standard: Geber=Hinterhand, links vom Geber=Vorhand, rechts=Mittelhand
-  var vRole='Vorhand', mRole='Mittelhand', hRole='Hinterhand';
-  if(dealerIdx===0){ vRole='★ Geber/HH'; mRole='Vorhand'; hRole='Mittelhand'; }
-  else if(dealerIdx===1){ vRole='Vorhand'; mRole='★ Geber/HH'; hRole='Mittelhand'; }
-  else { vRole='Vorhand'; mRole='Mittelhand'; hRole='★ Geber/HH'; }
-  return {vorhand:vRole, mittelhand:mRole, du:hRole};
+  var vRole='Vorhand',mRole='Mittelhand';
+  if(dealerIdx===0){vRole='★ Geber';}
+  else if(dealerIdx===1){mRole='★ Geber';}
+  return{vorhand:vRole,mittelhand:mRole};
 }
 
-// ── RENDER ALL ──
+function updateInfoBar(){
+  if(currentGame){
+    $('ib-spiel').textContent=GAME_SYMS[currentGame.type]+(currentGame.hand?' H':'');
+  } else {
+    $('ib-spiel').textContent=phase==='reizen'?'🎯':'–';
+  }
+  if(declarer){
+    var dn=declarer==='du'?'👤 Du':declarer==='vorhand'?'Vorhand':'Mittelhand';
+    var gs=currentGame?' '+GAME_SYMS[currentGame.type]+(currentGame.hand?' H':''):'';
+    $('ib-allein').textContent=dn+gs;
+    $('ib-allein').className='ib-val '+(declarer==='du'?'green':'red');
+  } else {$('ib-allein').textContent='–';$('ib-allein').className='ib-val';}
+  var roles=getRoles();
+  $('ib-vorhand').textContent=roles.vorhand;
+  $('ib-reiz').textContent=reizCurrentVal>0?reizCurrentVal:'–';
+
+  // Opponent box highlights
+  ['vorhand','mittelhand'].forEach(function(p){
+    var box=$(p==='vorhand'?'box-vorhand':'box-mittelhand');
+    var roleEl=$(p==='vorhand'?'role-vorhand':'role-mittelhand');
+    var gameEl=$(p==='vorhand'?'game-vorhand':'game-mittelhand');
+    var badgeEl=$(p==='vorhand'?'badge-vorhand':'badge-mittelhand');
+    roleEl.textContent=roles[p];
+
+    // Game display in box
+    if(declarer===p&&currentGame){
+      gameEl.textContent=GAME_SYMS[currentGame.type]+' '+GAME_NAMES[currentGame.type]+(currentGame.hand?' Hand':'');
+      gameEl.style.color='#7ab87a';
+    } else if(declarer===p&&reizCurrentVal>0){
+      gameEl.textContent='Reizwert: '+reizCurrentVal;
+      gameEl.style.color='#d4a83c';
+    } else {
+      gameEl.textContent='';
+    }
+
+    // Box styling
+    box.classList.remove('active-player','allein-box');
+    if(phase==='playing'&&currentPlayer===p) box.classList.add('active-player');
+    if(declarer===p) box.classList.add('allein-box');
+
+    // Badges
+    badgeEl.innerHTML='';
+    if(declarer===p){
+      var b=document.createElement('span');b.className='opp-badge badge-allein';b.textContent='★ Allein';badgeEl.appendChild(b);
+    } else if(declarer&&declarer!==p){
+      var b=document.createElement('span');b.className='opp-badge badge-gegen';b.textContent='Gegen';badgeEl.appendChild(b);
+    }
+    if(phase==='playing'&&currentPlayer===p){
+      var b=document.createElement('span');b.className='opp-badge badge-dran';b.textContent='▶ DRAN';badgeEl.appendChild(b);
+    }
+  });
+
+  // Du box highlight
+  var duBox=$('du-box');
+  duBox.classList.remove('active-player');
+  if(phase==='playing'&&currentPlayer==='du') duBox.classList.add('active-player');
+  $('dran-du').textContent=(phase==='playing'&&currentPlayer==='du')?'▶ DU BIST DRAN':'';
+}
+
 function renderAll(){
-  renderMiniCards('opp1-cards', hands.vorhand.length);
-  renderMiniCards('opp2-cards', hands.mittelhand.length);
+  renderMiniCards('opp1-cards',hands.vorhand.length);
+  renderMiniCards('opp2-cards',hands.mittelhand.length);
   renderPlayerHand();
   renderPlayArea();
   updateInfoBar();
 }
 
 function renderPlayerHand(){
-  var el=$('hand-area'); el.innerHTML='';
+  var el=$('hand-area');el.innerHTML='';
   var gt=currentGame?currentGame.type:null;
-  var sorted=sortHand(hands.du, gt);
+  var sorted=sortHand(hands.du,gt);
   sorted.forEach(function(card){
     var isDrueck=drueckenCards.indexOf(card.id)>=0;
     var ce=renderCardEl(card,{drueck:isDrueck});
-    ce.addEventListener('click',function(){ onCardClick(card); });
+    ce.addEventListener('click',function(){onCardClick(card);});
     el.appendChild(ce);
   });
 }
 
 function renderPlayArea(){
-  var el=$('play-cards'); el.innerHTML='';
+  var el=$('play-cards');el.innerHTML='';
   currentTrick.forEach(function(entry){
     var ce=renderCardEl(entry.card);
-    ce.classList.add('trick-card');
     var lbl=document.createElement('div');
     lbl.style.cssText='font-size:8px;color:#5a7a50;text-align:center;margin-top:2px;letter-spacing:1px';
     lbl.textContent=entry.player==='du'?'DU':entry.player==='vorhand'?'VH':'MH';
-    var w=document.createElement('div');
-    w.style.cssText='display:flex;flex-direction:column;align-items:center';
-    w.appendChild(ce); w.appendChild(lbl); el.appendChild(w);
+    var w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+    w.appendChild(ce);w.appendChild(lbl);el.appendChild(w);
   });
 }
 
 function renderSkat(){
-  var el=$('skat-cards'); el.innerHTML='';
-  skat.forEach(function(card){
-    el.appendChild(renderCardEl(card,{back:!skatTaken}));
-  });
+  var el=$('skat-cards');el.innerHTML='';
+  skat.forEach(function(card){el.appendChild(renderCardEl(card,{back:!skatTaken}));});
 }
 
-function setStatus(msg,sub){
-  $('status-text').textContent=msg||'';
-  $('game-sub').textContent=sub||'';
-}
-
-function showTrainer(msg){
-  if(!msg){ $('trainer-box').classList.remove('visible'); return; }
-  $('trainer-text').textContent=msg;
-  $('trainer-box').classList.add('visible');
-}
-
-function renderScores(){
-  $('sc-vorhand').textContent=scores.vorhand;
-  $('sc-mittelhand').textContent=scores.mittelhand;
-  $('sc-du').textContent=scores.du;
-}
+function setStatus(msg,sub){$('status-text').textContent=msg||'';$('game-sub').textContent=sub||'';}
+function showTrainer(msg){if(!msg){$('trainer-box').classList.remove('visible');return;}$('trainer-text').textContent=msg;$('trainer-box').classList.add('visible');}
+function renderScores(){$('sc-vorhand').textContent=scores.vorhand;$('sc-mittelhand').textContent=scores.mittelhand;$('sc-du').textContent=scores.du;}
 
 function hideAll(){
-  ['reiz-area','gametype-area','druecken-area','trainer-box','round-result','skat-area'].forEach(function(id){
-    var el=$(id); el.classList.remove('visible');
-  });
+  ['reiz-area','gametype-area','druecken-area','trainer-box','round-result','skat-area','reiz-log-box'].forEach(function(id){$(id).classList.remove('visible');});
 }
 
-// ── LAST STICH ──
-$('last-stich-btn').addEventListener('click', function(){
-  if(!lastTrick||lastTrick.length===0) return;
-  var el=$('last-stich-cards'); el.innerHTML='';
-  lastTrick.forEach(function(entry){
-    var ce=renderCardEl(entry.card);
-    var lbl=document.createElement('div');
-    lbl.style.cssText='font-size:9px;color:#5a7a50;text-align:center;margin-top:3px';
-    lbl.textContent=entry.player==='du'?'Du':entry.player==='vorhand'?'Vorhand':'Mittelhand';
-    var w=document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;align-items:center';
-    w.appendChild(ce); w.appendChild(lbl); el.appendChild(w);
-  });
-  var pts=lastTrick.reduce(function(s,e){return s+cardPts(e.card);},0);
-  var wname=lastTrickWinner==='du'?'Du':lastTrickWinner==='vorhand'?'Vorhand':'Mittelhand';
-  $('last-stich-winner').textContent='Gewonnen: '+wname+' ('+pts+' Punkte)';
-  $('last-stich-overlay').classList.add('visible');
-});
-$('close-last-stich').addEventListener('click',function(){
-  $('last-stich-overlay').classList.remove('visible');
-});
+// ── REIZ LOG ──
+function addReizLog(text,cls){
+  reizLog.push({text:text,cls:cls||''});
+  var el=$('reiz-log');
+  var line=document.createElement('div');
+  line.className='reiz-log-line '+(cls||'');
+  line.textContent=text;
+  el.appendChild(line);
+  el.scrollTop=el.scrollHeight;
+  $('reiz-log-box').classList.add('visible');
+}
 
-// ── REIZEN ──
+// ── REIZEN with step-by-step queue ──
+function enqueueReiz(fn,delay){reizQueue.push({fn:fn,delay:delay||600});}
+function runReizQueue(){
+  if(reizQueueRunning||reizQueue.length===0) return;
+  reizQueueRunning=true;
+  var item=reizQueue.shift();
+  setTimeout(function(){
+    item.fn();
+    reizQueueRunning=false;
+    if(reizQueue.length>0) runReizQueue();
+  },item.delay);
+}
+
 function startReizen(){
   phase='reizen';
   maxBids.vorhand=computeMaxBid('vorhand');
   maxBids.mittelhand=computeMaxBid('mittelhand');
   maxBids.du=computeMaxBid('du');
   reizPassed={vorhand:false,mittelhand:false,du:false};
-  reizPhase=0;
-  reizCurrentIdx=0;
-  reizCurrentVal=0;
-  reizResponder='vorhand';
-  var hint=getHandHint(hands.du,maxBids.du);
-  showTrainer(hint);
+  reizPhase=0;reizCurrentIdx=0;reizCurrentVal=0;reizResponder='vorhand';
+  reizLog=[];reizQueue=[];reizQueueRunning=false;
+  $('reiz-log').innerHTML='';
   updateInfoBar();
-  doReizStep();
+  showTrainer(getHandHint(hands.du,maxBids.du));
+  // Start AI reizen steps with delays so player can follow
+  runAIReizPhase();
 }
 
-function doReizStep(){
-  if(reizPhase===0){
-    // Mittelhand bids to Vorhand
-    var val=REIZ_VALS[reizCurrentIdx];
-    if(reizPassed.mittelhand&&reizPassed.vorhand){
-      reizPhase=1; reizResponder=''; doReizStep(); return;
-    }
-    if(!reizPassed.mittelhand&&maxBids.mittelhand>=val){
-      if(!reizPassed.vorhand&&maxBids.vorhand>=val){
+function runAIReizPhase(){
+  // Phase 0: Mittelhand bids vs Vorhand
+  var idx=reizCurrentIdx;
+  if(reizPassed.mittelhand&&reizPassed.vorhand){
+    // Go to phase 1
+    setTimeout(function(){startPlayerReizPhase();},400);
+    return;
+  }
+  var val=REIZ_VALS[idx];
+  if(!reizPassed.mittelhand&&maxBids.mittelhand>=val){
+    // Mittelhand bids
+    enqueueReiz(function(){
+      addReizLog('Mittelhand: "'+val+'!"','bid');
+      setStatus('Mittelhand reizt '+val);
+    },700);
+    if(!reizPassed.vorhand&&maxBids.vorhand>=val){
+      // Vorhand holds
+      enqueueReiz(function(){
+        addReizLog('Vorhand: "Ja" (halte '+val+')','hold');
+        setStatus('Vorhand hält '+val);
         reizCurrentIdx++;
-        if(reizCurrentIdx>=REIZ_VALS.length){ reizPassed.mittelhand=true; doReizStep(); return; }
-        setTimeout(doReizStep,200); return;
-      } else {
-        reizPassed.vorhand=true;
-        reizPhase=1; reizResponder='mittelhand'; doReizStep(); return;
-      }
+        reizCurrentVal=val;
+      },700);
+      enqueueReiz(function(){runAIReizPhase();},300);
     } else {
+      // Vorhand passes
+      enqueueReiz(function(){
+        addReizLog('Vorhand: "Weg" (passe)','pass');
+        setStatus('Vorhand passt');
+        reizPassed.vorhand=true;
+        reizCurrentVal=val;
+        reizPhase=1;reizResponder='mittelhand';
+      },700);
+      enqueueReiz(function(){startPlayerReizPhase();},300);
+    }
+  } else {
+    // Mittelhand passes
+    enqueueReiz(function(){
+      addReizLog('Mittelhand: "Weg" (passe)','pass');
       reizPassed.mittelhand=true;
-      reizPhase=1; reizResponder='vorhand'; doReizStep(); return;
-    }
+      reizPhase=1;reizResponder='vorhand';
+    },500);
+    enqueueReiz(function(){startPlayerReizPhase();},300);
   }
-  if(reizPhase===1){
-    if(reizPassed.du){
-      if(reizResponder&&!reizPassed[reizResponder]){ aiWinsReiz(reizResponder); }
-      else { noOneReized(); }
-      return;
-    }
-    if(!reizResponder||reizPassed[reizResponder]){
-      // Du wins without bidding
-      playerWinsReiz(); return;
-    }
-    var val=REIZ_VALS[reizCurrentIdx];
-    reizCurrentVal=val;
-    $('reiz-area').classList.add('visible');
-    var rname=reizResponder==='vorhand'?'Vorhand':'Mittelhand';
-    $('reiz-text').innerHTML=
-      '<b style="color:#d4a83c">'+rname+'</b> hält mit.<br>'+
-      'Bietest du <b style="color:#d4a83c">'+val+'</b>?';
-    updateInfoBar();
-    setStatus('Reizen: '+val);
+  runReizQueue();
+}
+
+function startPlayerReizPhase(){
+  // Now du (Hinterhand) bids vs winner of phase 0
+  if(reizPassed.vorhand&&reizPassed.mittelhand){
+    // Nobody bid – du wins automatically
+    enqueueReiz(function(){
+      addReizLog('Alle gepasst – du kannst spielen oder auch passen','');
+      playerWinsReiz();
+    },400);
+    runReizQueue();
+    return;
   }
+  var responder=reizResponder;
+  if(reizPassed[responder]){playerWinsReiz();return;}
+
+  // Find next reiz value du needs to bid
+  var nextIdx=reizCurrentIdx;
+  // If mittelhand won phase0, du needs to outbid that value
+  var val=REIZ_VALS[nextIdx]||REIZ_VALS[0];
+  reizCurrentVal=val;
+  updateInfoBar();
+  $('reiz-area').classList.add('visible');
+  var rname=responder==='vorhand'?'Vorhand':'Mittelhand';
+  $('reiz-text').innerHTML=
+    '<b style="color:#d4a83c">'+rname+'</b> '+(reizCurrentIdx>0?'hält. ':'bietet. ')+
+    'Reizt du <b style="color:#d4a83c">'+val+'</b>?';
+  setStatus('Du bist dran: '+val+' bieten?');
 }
 
 function playerReizJa(){
   $('reiz-area').classList.remove('visible');
+  addReizLog('Du: "'+reizCurrentVal+'"','bid');
+  // Responder holds or passes
+  var responder=reizResponder;
   reizCurrentIdx++;
-  if(reizCurrentIdx>=REIZ_VALS.length||maxBids[reizResponder]<REIZ_VALS[reizCurrentIdx]){
-    reizPassed[reizResponder]=true;
-    playerWinsReiz();
+  var nextVal=REIZ_VALS[reizCurrentIdx];
+  if(!nextVal||maxBids[responder]<nextVal){
+    // Responder passes
+    addReizLog(responder==='vorhand'?'Vorhand: "Weg"':'Mittelhand: "Weg"','pass');
+    reizPassed[responder]=true;
+    setTimeout(function(){playerWinsReiz();},400);
   } else {
-    setTimeout(doReizStep,200);
+    addReizLog((responder==='vorhand'?'Vorhand':'Mittelhand')+': "Ja" (halte '+reizCurrentVal+')','hold');
+    reizCurrentVal=nextVal;
+    setTimeout(function(){startPlayerReizPhase();},600);
   }
 }
 
 function playerReizNein(){
   $('reiz-area').classList.remove('visible');
+  addReizLog('Du: "Weg" (passe)','pass');
   reizPassed.du=true;
-  if(reizResponder&&!reizPassed[reizResponder]){ aiWinsReiz(reizResponder); }
-  else { noOneReized(); }
+  var responder=reizResponder;
+  if(responder&&!reizPassed[responder]){
+    setTimeout(function(){aiWinsReiz(responder);},400);
+  } else {
+    setTimeout(function(){noOneReized();},400);
+  }
 }
 
 function playerWinsReiz(){
   declarer='du';
   updateInfoBar();
+  addReizLog('✅ Du hast das Reizen gewonnen!','hold');
   showTrainer(getReizWinHint(reizCurrentVal));
-  startGameType();
+  setTimeout(function(){startGameType();},600);
 }
 
 function aiWinsReiz(player){
   declarer=player;
   updateInfoBar();
+  addReizLog('✅ '+(player==='vorhand'?'Vorhand':'Mittelhand')+' hat das Reizen gewonnen ('+reizCurrentVal+')','hold');
   setStatus((player==='vorhand'?'Vorhand':'Mittelhand')+' spielt! Reizwert: '+reizCurrentVal);
-  showTrainer('📢 '+(player==='vorhand'?'Vorhand':'Mittelhand')+' hat das Reizen gewonnen ('+reizCurrentVal+'). Du spielst als Gegenpartei.');
-  setTimeout(function(){ aiChoosesGame(player); },800);
+  showTrainer('📢 '+(player==='vorhand'?'Vorhand':'Mittelhand')+' hat gewonnen ('+reizCurrentVal+'). Du spielst als Gegenpartei.');
+  setTimeout(function(){aiChoosesGame(player);},800);
 }
 
 function noOneReized(){
+  addReizLog('Alle gepasst – neue Runde','pass');
   setStatus('Alle gepasst – neue Runde');
-  showTrainer('🔄 Alle haben gepasst. Neue Runde beginnt...');
+  showTrainer('🔄 Alle haben gepasst. Neue Runde...');
   setTimeout(nextRound,2000);
 }
 
 // ── GAME TYPE (Player) ──
 function startGameType(){
   phase='gametype';
-  skatTaken=false; chosenGameType=null; schneiderAngesagt=false; schwarzAngesagt=false; handSpiel=false;
+  skatTaken=false;chosenGameType=null;schneiderAngesagt=false;schwarzAngesagt=false;handSpiel=false;
   $('gametype-area').classList.add('visible');
   $('skat-area').classList.add('visible');
-  renderSkat();
-  renderPlayerHand();
+  renderSkat();renderPlayerHand();
   setStatus('Du bist Alleinspieler! Wähle dein Spiel.');
-  document.querySelectorAll('.gt-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.gt-btn').forEach(function(b){b.classList.remove('active');});
   $('hand-btn').classList.remove('active');
   $('schneider-btn').classList.remove('active');
   $('schwarz-btn').classList.remove('active');
@@ -835,9 +863,8 @@ function startGameType(){
 $('skat-aufnehmen-btn').addEventListener('click',function(){
   if(skatTaken) return;
   skatTaken=true;
-  hands.du=hands.du.concat(skat); skat=[];
-  drueckenCards=[];
-  phase='druecken';
+  hands.du=hands.du.concat(skat);skat=[];
+  drueckenCards=[];phase='druecken';
   $('gametype-area').classList.remove('visible');
   $('druecken-area').classList.add('visible');
   $('skat-area').classList.remove('visible');
@@ -849,34 +876,28 @@ $('skat-aufnehmen-btn').addEventListener('click',function(){
 $('hand-btn').addEventListener('click',function(){
   handSpiel=!handSpiel;
   $('hand-btn').classList.toggle('active',handSpiel);
-  if(handSpiel){
-    $('skat-aufnehmen-btn').style.display='none';
-    showTrainer('✋ Hand-Spiel! Du nimmst den Skat nicht auf – höherer Spielwert!');
-  } else { $('skat-aufnehmen-btn').style.display=''; }
+  if(handSpiel){$('skat-aufnehmen-btn').style.display='none';showTrainer('✋ Hand-Spiel! Höherer Spielwert!');}
+  else {$('skat-aufnehmen-btn').style.display='';}
 });
 
 $('schneider-btn').addEventListener('click',function(){
-  schneiderAngesagt=!schneiderAngesagt;
-  $('schneider-btn').classList.toggle('active',schneiderAngesagt);
+  schneiderAngesagt=!schneiderAngesagt;$('schneider-btn').classList.toggle('active',schneiderAngesagt);
 });
 $('schwarz-btn').addEventListener('click',function(){
-  schwarzAngesagt=!schwarzAngesagt;
-  $('schwarz-btn').classList.toggle('active',schwarzAngesagt);
+  schwarzAngesagt=!schwarzAngesagt;$('schwarz-btn').classList.toggle('active',schwarzAngesagt);
 });
 
 document.querySelectorAll('.gt-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
-    document.querySelectorAll('.gt-btn').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    chosenGameType=btn.dataset.game;
-    renderPlayerHand();
-    updateInfoBar();
+    document.querySelectorAll('.gt-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');chosenGameType=btn.dataset.game;
+    renderPlayerHand();updateInfoBar();
   });
 });
 
 $('confirm-game-btn').addEventListener('click',function(){
-  if(!chosenGameType){ showTrainer('⚠️ Bitte zuerst ein Spiel wählen!'); return; }
-  if(phase==='druecken'){ showTrainer('⚠️ Erst 2 Karten drücken!'); return; }
+  if(!chosenGameType){showTrainer('⚠️ Bitte zuerst ein Spiel wählen!');return;}
+  if(phase==='druecken'){showTrainer('⚠️ Erst 2 Karten drücken!');return;}
   currentGame={type:chosenGameType,hand:handSpiel,schneider:schneiderAngesagt,schwarz:schwarzAngesagt};
   updateInfoBar();
   $('gametype-area').classList.remove('visible');
@@ -885,34 +906,37 @@ $('confirm-game-btn').addEventListener('click',function(){
 });
 
 $('druecken-btn').addEventListener('click',function(){
-  if(drueckenCards.length!==2){ showTrainer('⚠️ Genau 2 Karten auswählen!'); return; }
+  if(drueckenCards.length!==2){showTrainer('⚠️ Genau 2 Karten auswählen!');return;}
   var removed=[];
-  hands.du=hands.du.filter(function(c){
-    if(drueckenCards.indexOf(c.id)>=0){ removed.push(c); return false; } return true;
-  });
-  skat=removed; drueckenCards=[];
-  phase='gametype';
+  hands.du=hands.du.filter(function(c){if(drueckenCards.indexOf(c.id)>=0){removed.push(c);return false;}return true;});
+  skat=removed;drueckenCards=[];phase='gametype';
   $('druecken-area').classList.remove('visible');
   $('gametype-area').classList.add('visible');
   renderPlayerHand();
   showTrainer('✅ Karten gedrückt! Jetzt Spiel ansagen.');
 });
 
-// ── AI GAME CHOICE ──
+// ── AI GAME CHOICE (improved) ──
 function aiChoosesGame(player){
   var hand=hands[player].concat(skat);
-  var best='kreuz'; var bestVal=0;
-  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
-    var mat=countMatadors(hand,gt);
-    var v=BASE_VAL[gt]*(mat+1);
-    if(v>bestVal){ bestVal=v; best=gt; }
-  });
-  var allCards=hand.slice().sort(function(a,b){ return cardPts(a)-cardPts(b); });
-  var pressed=allCards.slice(0,2);
-  hands[player]=allCards.slice(2);
+  var best=chooseBestGame(hand,[]);
+  // AI presses 2 least valuable non-trump cards
+  var nonTrump=hand.filter(function(c){return !isTrump(c,best);}).sort(function(a,b){return cardPts(a)-cardPts(b);});
+  var trump=hand.filter(function(c){return isTrump(c,best);});
+  var pressed=[];
+  // Press 2 lowest-value non-trump first; if not enough, press lowest trump
+  if(nonTrump.length>=2){pressed=nonTrump.slice(0,2);}
+  else if(nonTrump.length===1){pressed=[nonTrump[0],trump.sort(function(a,b){return cardPts(a)-cardPts(b);})[0]];}
+  else{pressed=trump.sort(function(a,b){return cardPts(a)-cardPts(b);}).slice(0,2);}
+  var pressedIds=pressed.map(function(c){return c.id;});
+  hands[player]=hand.filter(function(c){return pressedIds.indexOf(c.id)<0;});
   skat=pressed;
   currentGame={type:best,hand:false,schneider:false,schwarz:false};
   updateInfoBar();
+  // Show game in opp box
+  var gameEl=$(player==='vorhand'?'game-vorhand':'game-mittelhand');
+  gameEl.textContent=GAME_SYMS[best]+' '+GAME_NAMES[best];
+  gameEl.style.color='#7ab87a';
   setStatus((player==='vorhand'?'Vorhand':'Mittelhand')+' spielt '+GAME_NAMES[best]);
   startPlaying();
 }
@@ -922,16 +946,17 @@ function startPlaying(){
   phase='playing';
   tricks={vorhand:[],mittelhand:[],du:[]};
   trickPoints={vorhand:0,mittelhand:0,du:0};
-  currentTrick=[]; lastTrick=[]; lastTrickWinner=null;
+  currentTrick=[];lastTrick=[];lastTrickWinner=null;
   $('druecken-area').classList.remove('visible');
   $('gametype-area').classList.remove('visible');
   $('skat-area').classList.remove('visible');
   $('last-stich-btn').style.display='none';
+  $('stich-info').textContent='';
   currentPlayer='vorhand';
   renderAll();
-  setStatus('Spiel: '+GAME_NAMES[currentGame.type], declarer==='du'?'Du spielst allein!':(declarer.charAt(0).toUpperCase()+declarer.slice(1))+' spielt allein');
+  setStatus('Spiel: '+GAME_NAMES[currentGame.type],declarer==='du'?'Du spielst allein!':(declarer==='vorhand'?'Vorhand':'Mittelhand')+' spielt allein');
   showTrainer(getPlayStartHint());
-  if(currentPlayer!=='du') setTimeout(aiPlay,800);
+  if(currentPlayer!=='du') setTimeout(aiPlay,900);
   else setStatus('Du bist dran – wähle eine Karte');
 }
 
@@ -940,23 +965,22 @@ function onCardClick(card){
     var idx=drueckenCards.indexOf(card.id);
     if(idx>=0) drueckenCards.splice(idx,1);
     else if(drueckenCards.length<2) drueckenCards.push(card.id);
-    renderPlayerHand(); return;
+    renderPlayerHand();return;
   }
   if(phase!=='playing'||currentPlayer!=='du') return;
   if(!isLegalPlay(card,hands.du,currentTrick,currentGame.type)){
-    showTrainer('⚠️ '+getLegalHint(card,hands.du,currentTrick,currentGame.type)); return;
+    showTrainer('⚠️ '+getLegalHint(card,hands.du,currentTrick,currentGame.type));return;
   }
   playCard('du',card);
 }
 
 function isLegalPlay(card,hand,trick,gt){
   if(trick.length===0) return true;
-  var led=trick[0].card;
-  var ledT=isTrump(led,gt);
-  var myT=hand.filter(function(c){ return isTrump(c,gt); });
-  var myS=hand.filter(function(c){ return !isTrump(c,gt)&&c.suit===led.suit; });
-  if(ledT){ if(myT.length>0) return isTrump(card,gt); return true; }
-  else { if(myS.length>0) return !isTrump(card,gt)&&card.suit===led.suit; return true; }
+  var led=trick[0].card,ledT=isTrump(led,gt);
+  var myT=hand.filter(function(c){return isTrump(c,gt);});
+  var myS=hand.filter(function(c){return !isTrump(c,gt)&&c.suit===led.suit;});
+  if(ledT){if(myT.length>0) return isTrump(card,gt);return true;}
+  else{if(myS.length>0) return !isTrump(card,gt)&&card.suit===led.suit;return true;}
 }
 
 function getLegalHint(card,hand,trick,gt){
@@ -967,29 +991,25 @@ function getLegalHint(card,hand,trick,gt){
 }
 
 function playCard(player,card){
-  hands[player]=hands[player].filter(function(c){ return c.id!==card.id; });
+  hands[player]=hands[player].filter(function(c){return c.id!==card.id;});
   currentTrick.push({player:player,card:card});
-  if(player==='du'){
-    var c=getCardComment(card,currentTrick,hands.du,currentGame.type);
-    if(c) showTrainer(c);
-  }
   renderAll();
-  if(currentTrick.length===3){ setTimeout(resolveTrick,900); }
-  else {
+  if(currentTrick.length===3){setTimeout(resolveTrick,900);}
+  else{
     currentPlayer=getNext(player);
     updateInfoBar();
-    if(currentPlayer!=='du') setTimeout(aiPlay,600);
+    if(currentPlayer!=='du') setTimeout(aiPlay,700);
     else setStatus('Du bist dran!');
   }
 }
 
-function getNext(p){ var o=['vorhand','mittelhand','du']; return o[(o.indexOf(p)+1)%3]; }
+function getNext(p){var o=['vorhand','mittelhand','du'];return o[(o.indexOf(p)+1)%3];}
 
 function aiPlay(){
   if(phase!=='playing') return;
   var hand=hands[currentPlayer];
   if(hand.length===0) return;
-  var legal=hand.filter(function(c){ return isLegalPlay(c,hand,currentTrick,currentGame.type); });
+  var legal=hand.filter(function(c){return isLegalPlay(c,hand,currentTrick,currentGame.type);});
   if(legal.length===0) legal=hand;
   var card=aiChooseCard(currentPlayer,legal,currentTrick,currentGame.type);
   playCard(currentPlayer,card);
@@ -999,20 +1019,30 @@ function aiChooseCard(player,legal,trick,gt){
   var isDecl=player===declarer;
   if(trick.length===0){
     if(isDecl){
-      var tr=legal.filter(function(c){ return isTrump(c,gt); });
-      if(tr.length) return tr.sort(function(a,b){ return trumpRank(b,gt)-trumpRank(a,gt); })[0];
+      var tr=legal.filter(function(c){return isTrump(c,gt);});
+      if(tr.length) return tr.sort(function(a,b){return trumpRank(b,gt)-trumpRank(a,gt);})[0];
+      // Play highest ace
+      var aces=legal.filter(function(c){return c.rank==='A';});
+      if(aces.length) return aces[0];
+    } else {
+      // Defender: lead highest non-trump to probe
+      var nonT=legal.filter(function(c){return !isTrump(c,gt);});
+      if(nonT.length) return nonT.sort(function(a,b){return cardPts(b)-cardPts(a);})[0];
     }
-    return legal.sort(function(a,b){ return cardPts(a)-cardPts(b); })[0];
+    return legal.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
   }
   var winner=getTrickWinner(trick,gt);
   var winTeam=isDecl===(winner.player===declarer);
   if(winTeam){
-    if(!isDecl) return legal.sort(function(a,b){ return cardPts(b)-cardPts(a); })[0];
-    return legal.sort(function(a,b){ return cardPts(a)-cardPts(b); })[0];
+    if(!isDecl){
+      // Team is winning, dump high value card
+      return legal.sort(function(a,b){return cardPts(b)-cardPts(a);})[0];
+    }
+    return legal.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
   }
-  var canBeat=legal.filter(function(c){ return beats(c,winner.card,gt); });
-  if(canBeat.length) return canBeat.sort(function(a,b){ return cardPts(a)-cardPts(b); })[0];
-  return legal.sort(function(a,b){ return cardPts(a)-cardPts(b); })[0];
+  var canBeat=legal.filter(function(c){return beats(c,winner.card,gt);});
+  if(canBeat.length) return canBeat.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
+  return legal.sort(function(a,b){return cardPts(a)-cardPts(b);})[0];
 }
 
 function resolveTrick(){
@@ -1023,19 +1053,99 @@ function resolveTrick(){
   var pts=currentTrick.reduce(function(s,e){return s+cardPts(e.card);},0);
   trickPoints[winner.player]+=pts;
   var wname=winner.player==='du'?'Du':winner.player==='vorhand'?'Vorhand':'Mittelhand';
-  $('stich-info').textContent=wname+' gewinnt den Stich (+'+pts+' Pkt)';
+  $('stich-info').textContent=wname+' gewinnt den Stich';
   $('last-stich-btn').style.display='block';
+  // Trainer comment
+  showTrainer(getTrickAnalysis(lastTrick,winner,pts));
   currentTrick=[];
   currentPlayer=winner.player;
   if(hands.vorhand.length===0&&hands.mittelhand.length===0&&hands.du.length===0){
-    setTimeout(endRound,800); return;
+    setTimeout(endRound,800);return;
   }
   setTimeout(function(){
     $('stich-info').textContent='';
     renderAll();
-    if(currentPlayer!=='du') setTimeout(aiPlay,600);
+    if(currentPlayer!=='du') setTimeout(aiPlay,700);
     else setStatus('Du bist dran!');
-  },900);
+  },1000);
+}
+
+function getTrickAnalysis(trick,winner,pts){
+  var gt=currentGame.type;
+  var isDecl=declarer==='du';
+  var duEntry=trick.find(function(e){return e.player==='du';});
+  if(!duEntry) return '';
+  var duCard=duEntry.card;
+  var duWon=winner.player==='du';
+  var duTrump=isTrump(duCard,gt);
+  var duLed=trick[0].player==='du';
+  var duCardPts=cardPts(duCard);
+  var duTrumpsLeft=hands.du.filter(function(c){return isTrump(c,gt);}).length;
+  var cardsLeft=hands.du.length;
+  var declarerPts=trickPoints[declarer];
+  var comments=[];
+
+  if(duLed){
+    if(duTrump&&isDecl){
+      if(duWon){
+        comments.push('✅ Trumpf geführt und gewonnen.');
+        if(duTrumpsLeft>=2) comments.push('Du hast noch '+duTrumpsLeft+' Trümpfe – weiter Trumpf ziehen entwaffnet die Gegner.');
+        else if(duTrumpsLeft===1) comments.push('Noch 1 Trumpf – jetzt auf Asse setzen.');
+        else comments.push('Kein Trumpf mehr – jetzt hohe Karten einsammeln.');
+      } else {
+        comments.push('⚠️ Trumpf geführt aber überstochen! Prüfe ob Gegner noch höhere Trümpfe haben bevor du führst.');
+      }
+    } else if(!duTrump&&isDecl){
+      if(duWon&&duCardPts>=10) comments.push('✅ Hohe Karte ('+duCard.rank+SUIT_SYM[duCard.suit]+') sicher eingebracht!');
+      else if(!duWon) comments.push('⚠️ Fehlfarbe geführt und gestochen. Als Alleinspieler erst alle Trümpfe einziehen!');
+      else comments.push('👍 Fehlfarbe gewonnen – gut wenn Gegner schon blank sind.');
+    } else if(!isDecl){
+      if(duTrump&&duWon) comments.push('✅ Guter Trumpfeinsatz! Als Gegenspieler wichtig.');
+      else if(!duTrump&&duCardPts>=10) comments.push('💡 Hohe Karte als Gegenspieler führen – riskant wenn Alleinspieler noch Trumpf hat.');
+      else if(duWon) comments.push('👍 Stich gewonnen als Gegenspieler.');
+    }
+  } else {
+    var ledCard=trick[0].card;
+    var ledTrump=isTrump(ledCard,gt);
+    if(duTrump&&!ledTrump){
+      if(duWon) comments.push('✅ Richtig gestochen!'+( pts>=10?' '+pts+' wertvolle Punkte gesichert.':''));
+      else comments.push('⚠️ Gestochen aber überboten – höheren Trumpf einsetzen?');
+    } else if(!duTrump&&ledTrump){
+      comments.push('ℹ️ Kein Trumpf zum Bedienen – Abwurf.');
+      if(duCardPts>0) comments.push('💡 Beim Abwerfen punktearme Karten wählen ('+duCard.rank+SUIT_SYM[duCard.suit]+' kostete '+duCardPts+' Pkt).');
+      else comments.push('👍 Punktelose Karte abgeworfen – korrekt!');
+    } else if(duTrump&&ledTrump){
+      if(duWon) comments.push('✅ Höherer Trumpf eingesetzt – Stich gewonnen!');
+      else {
+        var hadHigher=hands.du.some(function(c){return isTrump(c,gt)&&beats(c,ledCard,gt);});
+        comments.push(hadHigher?'⚠️ Du hättest mit einem höheren Trumpf überbieten können!':'ℹ️ Kein höherer Trumpf – korrekter Abwurf.');
+      }
+    } else {
+      if(duWon&&duCardPts>=10) comments.push('✅ Hohe Karte gewonnen!');
+      else if(!duWon&&duCardPts>=10) comments.push('⚠️ '+duCard.rank+SUIT_SYM[duCard.suit]+' ('+duCardPts+' Pkt) verloren! Nur hohe Karten spielen wenn der Stich sicher ist.');
+      else if(duWon) comments.push('👍 Stich gewonnen.');
+      else comments.push('ℹ️ Ungünstigste Karte abgeworfen – korrekt.');
+    }
+  }
+
+  // Spielstand
+  if(isDecl){
+    var needed=61-declarerPts;
+    if(needed<=0) comments.push('🏆 Sieg gesichert! ('+declarerPts+' Augen)');
+    else if(cardsLeft>0) comments.push('📊 Stand: '+declarerPts+' Augen, noch '+needed+' nötig ('+cardsLeft+' Karten).');
+  } else {
+    var dPts=trickPoints[declarer];
+    var oPts=trickPoints.vorhand+trickPoints.mittelhand+trickPoints.du-dPts;
+    if(cardsLeft>0) comments.push('📊 Alleinspieler: '+dPts+' | Gegenpartei: '+(120-dPts)+' Augen.');
+  }
+
+  if(cardsLeft<=3&&cardsLeft>0){
+    if(isDecl&&duTrumpsLeft>0) comments.push('🔮 Endspiel: Noch '+duTrumpsLeft+' Trumpf – jetzt einsetzen!');
+    else if(isDecl) comments.push('🔮 Endspiel: Kein Trumpf mehr – auf hohe Karten setzen.');
+    else comments.push('🔮 Endspiel: Noch '+cardsLeft+' Karten – hohe Karten jetzt einbringen!');
+  }
+
+  return comments.join('\n');
 }
 
 // ── END ROUND ──
@@ -1043,16 +1153,10 @@ function endRound(){
   phase='result';
   var skatPts=skat.reduce(function(s,c){return s+cardPts(c);},0);
   trickPoints[declarer]+=skatPts;
-  var dPts=trickPoints[declarer];
-  var oPts=120-dPts;
-  var won=false; var schneider=false; var schwarz=false;
-  if(currentGame.type==='null'){
-    won=tricks[declarer].length===0;
-  } else {
-    won=dPts>=61;
-    schneider=dPts>=90||oPts>=90;
-    schwarz=dPts===120||oPts===120;
-  }
+  var dPts=trickPoints[declarer],oPts=120-dPts;
+  var won=false,schneider=false,schwarz=false;
+  if(currentGame.type==='null'){won=tricks[declarer].length===0;}
+  else{won=dPts>=61;schneider=dPts>=90||oPts>=90;schwarz=dPts===120||oPts===120;}
   var mat=countMatadors(hands[declarer].concat(skat),currentGame.type);
   var gVal=gameValue(currentGame.type,mat,currentGame.hand,schneider&&won,schwarz&&won,currentGame.schneider,currentGame.schwarz);
   var bidMet=reizCurrentVal===0||gVal>=reizCurrentVal;
@@ -1060,8 +1164,7 @@ function endRound(){
   var points=won?gVal:-2*gVal;
   scores[declarer]+=points;
   var dname=declarer==='du'?'Du':declarer==='vorhand'?'Vorhand':'Mittelhand';
-  var rt='';
-  rt+='🃏 Spiel: '+GAME_NAMES[currentGame.type]+(currentGame.hand?' Hand':'')+'\n';
+  var rt='🃏 Spiel: '+GAME_NAMES[currentGame.type]+(currentGame.hand?' Hand':'')+'\n';
   rt+='👤 Alleinspieler: '+dname+'\n';
   rt+='🎯 Augen: '+dPts+' (Allein) / '+oPts+' (Gegen)\n';
   if(skatPts>0) rt+='📦 Skat: +'+skatPts+' Pkt\n';
@@ -1083,107 +1186,108 @@ function nextRound(){
 }
 
 function startNewRound(){
-  phase='idle'; currentTrick=[]; currentGame=null; declarer=null;
-  reizCurrentVal=0; reizCurrentIdx=0; drueckenCards=[];
-  skatTaken=false; lastTrick=[]; lastTrickWinner=null;
+  phase='idle';currentTrick=[];currentGame=null;declarer=null;
+  reizCurrentVal=0;reizCurrentIdx=0;drueckenCards=[];
+  skatTaken=false;lastTrick=[];lastTrickWinner=null;
+  reizQueue=[];reizQueueRunning=false;
   hideAll();
   $('last-stich-btn').style.display='none';
   $('stich-info').textContent='';
-  deal(); renderAll(); renderScores();
-  updateInfoBar();
+  $('game-vorhand').textContent='';$('game-mittelhand').textContent='';
+  $('reiz-log').innerHTML='';
+  deal();renderAll();renderScores();updateInfoBar();
   setStatus('Karten ausgeteilt – Reizen beginnt...');
-  setTimeout(startReizen,700);
+  setTimeout(startReizen,800);
 }
+
+// ── SORT TOGGLE ──
+$('sort-btn').addEventListener('click',function(){
+  sortDir*=-1;
+  $('sort-btn').textContent=sortDir===1?'⇄ ↑ Hoch-Niedrig':'⇄ ↓ Niedrig-Hoch';
+  renderPlayerHand();
+});
+
+// ── LAST STICH ──
+$('last-stich-btn').addEventListener('click',function(){
+  if(!lastTrick||lastTrick.length===0) return;
+  var el=$('last-stich-cards');el.innerHTML='';
+  lastTrick.forEach(function(entry){
+    var ce=renderCardEl(entry.card);
+    var lbl=document.createElement('div');
+    lbl.style.cssText='font-size:9px;color:#5a7a50;text-align:center;margin-top:3px';
+    lbl.textContent=entry.player==='du'?'Du':entry.player==='vorhand'?'Vorhand':'Mittelhand';
+    var w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+    w.appendChild(ce);w.appendChild(lbl);el.appendChild(w);
+  });
+  var pts=lastTrick.reduce(function(s,e){return s+cardPts(e.card);},0);
+  var wname=lastTrickWinner==='du'?'Du':lastTrickWinner==='vorhand'?'Vorhand':'Mittelhand';
+  $('last-stich-winner').textContent='Gewonnen: '+wname+(pts>0?' ('+pts+' Punkte)':'');
+  $('last-stich-overlay').classList.add('visible');
+});
+$('close-last-stich').addEventListener('click',function(){$('last-stich-overlay').classList.remove('visible');});
 
 // ── TRAINER HINTS ──
 function getHandHint(hand,maxBid){
   var jacks=hand.filter(function(c){return c.rank==='B';}).length;
   var aces=hand.filter(function(c){return c.rank==='A';}).length;
-  if(level==='anfaenger'){
-    return '📋 Deine Hand: '+jacks+' Buben, '+aces+' Asse. '+
-      (maxBid>=36?'💪 Starke Hand! Bis '+maxBid+' reizen.':
-       maxBid>=24?'👍 Mittlere Hand. Vorsichtig bis '+maxBid+' reizen.':
-       '⚠️ Schwache Hand. Eher passen.');
-  }
+  if(level==='anfaenger') return '📋 Deine Hand: '+jacks+' Buben, '+aces+' Asse. '+(maxBid>=36?'💪 Starke Hand! Bis '+maxBid+' reizen.':maxBid>=24?'👍 Mittlere Hand. Bis '+maxBid+' reizen.':'⚠️ Schwache Hand – eher passen.');
   if(level==='fortgeschritten') return '🎯 Reizgrenze ca. '+maxBid+'. '+(maxBid>=36?'Aktiv reizen!':maxBid>=24?'Moderat reizen.':'Passen erwägen.');
   return '📊 Max. Reizwert: '+maxBid+' | Buben: '+jacks+' | Asse: '+aces;
 }
-
 function getReizWinHint(val){
-  if(level==='anfaenger') return '🎉 Du hast das Reizen gewonnen ('+val+')! Nimm den Skat auf oder spiele Hand.';
-  if(level==='fortgeschritten') return '✅ Reiz gewonnen bei '+val+'. Skat aufnehmen?';
+  if(level==='anfaenger') return '🎉 Du hast gewonnen ('+val+')! Nimm den Skat auf oder spiele Hand. Dann dein Spiel ansagen.';
+  if(level==='fortgeschritten') return '✅ Reiz gewonnen bei '+val+'. Skat aufnehmen lohnt sich fast immer!';
   return '🏆 Reizwert: '+val+'. Optimales Spiel wählen.';
 }
-
 function getGameTypeHint(hand,skat){
+  var best=chooseBestGame(hand,skat);
   var combined=hand.concat(skat);
-  var best='kreuz'; var bestVal=0;
-  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
-    var mat=countMatadors(combined,gt);
-    var v=BASE_VAL[gt]*(mat+1);
-    if(v>bestVal){bestVal=v;best=gt;}
-  });
-  if(level==='anfaenger') return '💡 Schau welche Farbe du oft hast – das ist dein Trumpf. Empfehlung: '+GAME_NAMES[best]+' (ca. '+bestVal+' Pkt)';
-  if(level==='fortgeschritten') return '🎯 Empfehlung: '+GAME_NAMES[best]+' ('+bestVal+' Pkt)';
-  return '📊 Optimum: '+GAME_NAMES[best]+' | Spielwert: '+bestVal;
+  var mat=countMatadors(combined,best);
+  var val=BASE_VAL[best]*(mat+1);
+  if(level==='anfaenger') return '💡 Welche Farbe hast du am häufigsten? Das ist dein Trumpf! Empfehlung: '+GAME_NAMES[best]+' (ca. '+val+' Pkt)';
+  if(level==='fortgeschritten') return '🎯 Empfehlung: '+GAME_NAMES[best]+' ('+val+' Pkt)';
+  return '📊 Optimum: '+GAME_NAMES[best]+' | Wert: '+val;
 }
-
 function getDrueckenHint(hand){
-  if(level==='anfaenger') return '💡 Drücke 2 Karten die wenig bringen. Am besten punktearme Fehlfarben – keine Trümpfe drücken!';
-  if(level==='fortgeschritten') return '🎯 Punktearme Karten oder Fehlfarben für Abwürfe drücken.';
-  return '📊 Drücken: schwache Fehlfarben bevorzugen.';
+  if(level==='anfaenger') return '💡 Drücke 2 Karten die wenig bringen – am besten punktelose Fehlfarben. Keine Trümpfe drücken!';
+  if(level==='fortgeschritten') return '🎯 Drücke punktearme Fehlfarben oder schaffe blanke Farben zum Abwerfen.';
+  return '📊 Optimales Drücken: Fehlfarben bereinigen, Punkte sichern.';
 }
-
 function getPlayStartHint(){
   if(declarer==='du'){
-    if(level==='anfaenger') return '🎮 Du spielst allein! Ziel: 61+ Augen. Trumpf einziehen, dann Asse kassieren.';
-    if(level==='fortgeschritten') return '🎯 Alleinspieler: Trumpf ziehen, Asse sichern!';
+    if(level==='anfaenger') return '🎮 Du spielst allein! Ziel: 61+ Augen. Tipp: Erst alle Trümpfe einziehen, dann Asse kassieren.';
+    if(level==='fortgeschritten') return '🎯 Alleinspieler: Trumpf ziehen, dann Fehlfarben aufmachen!';
     return '📊 Allein. Trümpfe: '+hands.du.filter(function(c){return isTrump(c,currentGame.type);}).length;
   }
-  if(level==='anfaenger') return '🤝 Du spielst als Gegenpartei! Zusammen braucht ihr 60+ Augen gegen den Alleinspieler.';
-  if(level==='fortgeschritten') return '🎯 Gegenpartei: Fehlfarben stechen, hohe Karten abwerfen!';
+  if(level==='anfaenger') return '🤝 Gegenpartei! Ihr braucht zusammen 60+ Augen. Hohe Karten einbringen und Trumpf sparen!';
+  if(level==='fortgeschritten') return '🎯 Gegenspieler: Fehlfarben anschneiden, Abwürfe nutzen!';
   return '📊 Gegenspieler. Ziel: 60 Augen für die Gegenpartei.';
 }
-
-function getCardComment(card,trick,hand,gt){
-  var pts=cardPts(card);
-  var trump=isTrump(card,gt);
-  if(trick.length===1&&trump&&declarer==='du'&&level==='anfaenger') return '✅ Gut! Trumpf ziehen als Alleinspieler ist oft richtig.';
-  if(trick.length===1&&pts>=10&&level!=='experte') return '💡 Zehn ausgespielt – nur wenn du sicher gewinnst!';
-  return '';
-}
-
 function getEndHint(won,pts,gt,decl,bidMet,gVal){
   var isP=decl==='du';
-  if(!bidMet&&isP) return '⚠️ Überreizt! Spielwert '+gVal+' war unter deinem Reizwert. Nächstes Mal vorsichtiger reizen!';
-  if(isP&&won&&pts>=90) return '🌟 Schneider! Fantastisch – '+pts+' Augen!';
-  if(isP&&won) return '✅ Gut gespielt! '+pts+' Augen reichen zum Sieg.';
-  if(isP&&!won) return level==='anfaenger'?'😔 Verloren mit '+pts+' Augen. Tipp: Trümpfe früher einziehen!':'❌ '+pts+' Augen. Trumpfmanagement verbessern.';
-  if(!isP&&won) return '🤝 Gegenpartei hat gewonnen! Gute Zusammenarbeit.';
-  return '👍 Gut verteidigt!';
+  if(!bidMet&&isP) return '⚠️ Überreizt! Spielwert '+gVal+' war unter dem Reizwert. Nächstes Mal konservativer reizen!';
+  if(isP&&won&&pts>=90) return '🌟 Schneider! Hervorragend – '+pts+' Augen!';
+  if(isP&&won) return '✅ Gut gespielt! '+pts+' Augen – Sieg!';
+  if(isP&&!won) return level==='anfaenger'?'😔 Verloren ('+pts+' Augen). Tipp: Erst Trümpfe einziehen, dann Asse!':'❌ '+pts+' Augen. Trumpfmanagement und Stichplanung verbessern.';
+  if(!isP&&won) return '🤝 Gegenpartei hat gewonnen! Gut verteidigt.';
+  return '👍 Knapp verloren – weiter so!';
 }
 
 // ── BUTTONS ──
-$('new-game-btn').addEventListener('click',function(){
-  scores={vorhand:0,mittelhand:0,du:0};
-  renderScores();
-  startNewRound();
-});
-$('level-btn').addEventListener('click',function(){ $('level-screen').classList.remove('hidden'); });
+$('new-game-btn').addEventListener('click',function(){scores={vorhand:0,mittelhand:0,du:0};renderScores();startNewRound();});
+$('level-btn').addEventListener('click',function(){$('level-screen').classList.remove('hidden');});
 $('reiz-ja').addEventListener('click',playerReizJa);
 $('reiz-nein').addEventListener('click',playerReizNein);
 
 function setLevel(l){
-  level=l;
-  $('level-screen').classList.add('hidden');
+  level=l;$('level-screen').classList.add('hidden');
   var n={anfaenger:'🌱 Anfänger',fortgeschritten:'⚡ Fortgeschrittener',experte:'🏆 Experte'};
   $('header-level').textContent=n[l]||l;
   startNewRound();
 }
 
 // INIT
-renderScores();
-updateInfoBar();
+renderScores();updateInfoBar();
 </script>
 </body>
 </html>
