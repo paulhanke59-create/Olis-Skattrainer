@@ -191,6 +191,7 @@ body { font-family: Georgia, serif; background: radial-gradient(ellipse at 50% 0
   <div id="level-logo">🃏</div>
   <div id="level-title">Oli's Skattrainer</div>
   <div id="level-sub">Dein persönlicher KI-Skat-Coach</div>
+  <div style="font-size:10px;color:#3a5a30;margin-bottom:20px;letter-spacing:1px">v1.5 · 14.06.2026 · 22:30</div>
   <button class="level-btn" onclick="setLevel('anfaenger')">
     <span class="level-name">🌱 Anfänger</span>
     <span class="level-desc">Ich lerne noch. Der Trainer erklärt alles ausführlich und geduldig.</span>
@@ -220,7 +221,7 @@ body { font-family: Georgia, serif; background: radial-gradient(ellipse at 50% 0
   <div style="flex:1">
     <div id="header-title">🃏 Oli's Skattrainer</div>
     <div id="header-level"></div>
-    <div id="header-version">v1.4 · 14.06.2026 · 21:15</div>
+    <div id="header-version">v1.5 · 14.06.2026 · 22:30</div>
   </div>
   <button class="hbtn" id="sort-btn">⇄ Sort</button>
   <button class="hbtn" id="new-game-btn">↺ Neu</button>
@@ -663,8 +664,14 @@ function startReizen(){
   reizQueue=[];reizQueueRunning=false;
   $('reiz-log').innerHTML='';
   updateInfoBar();
-  // Trainer: analyze player's hand before bidding
-  var handPrompt='Meine Hand: '+handStr(hands.du)+'. Mein Erfahrungslevel: '+level+'. Was ist meine stärkste Spieloption? Soll ich reizen und bis wie viel? Antworte kurz auf Deutsch.';
+  // Trainer: analyze player's hand before bidding - count exactly
+  var myJacks=hands.du.filter(function(c){return c.rank==='B';});
+  var myAces=hands.du.filter(function(c){return c.rank==='A';});
+  var myTens=hands.du.filter(function(c){return c.rank==='10';});
+  var handPrompt='Meine Skathand (genau '+hands.du.length+' Karten): '+handStr(hands.du)+
+    '. Davon: '+myJacks.length+' Buben ('+myJacks.map(cardName).join(',')+'), '+
+    myAces.length+' Asse, '+myTens.length+' Zehnen. '+
+    'Erfahrungslevel: '+level+'. Was ist meine beste Spieloption? Bis wie viel sollte ich reizen? Antworte konkret auf Basis dieser exakten Karten.';
   trainerAnalyze(handPrompt);
   runAIReizPhase();
 }
@@ -838,7 +845,7 @@ function aiChoosesGame(player){
 function startPlaying(){
   phase='playing';
   tricks={vorhand:[],mittelhand:[],du:[]};trickPoints={vorhand:0,mittelhand:0,du:0};
-  currentTrick=[];lastTrick=[];lastTrickWinner=null;playedCards=[];
+  currentTrick=[];lastTrick=[];lastTrickWinner=null;playedCards=[];aiPlaying=false;
   $('druecken-area').classList.remove('visible');$('gametype-area').classList.remove('visible');$('skat-area').classList.remove('visible');
   $('last-stich-btn').style.display='none';$('stich-info').textContent='';
   currentPlayer='vorhand';
@@ -886,10 +893,13 @@ function getLegalHint(card,hand,trick,gt){
   return 'Du musst '+SUIT_SYM[led.suit]+' bedienen!';
 }
 
+var aiPlaying=false; // guard against double AI plays
+
 function playCard(player,card){
   hands[player]=hands[player].filter(function(c){return c.id!==card.id;});
   currentTrick.push({player:player,card:card});
   playedCards.push({player:player,card:card});
+  aiPlaying=false;
   renderAll();
   if(currentTrick.length===3){setTimeout(resolveTrick,900);}
   else{
@@ -904,7 +914,11 @@ function getNext(p){var o=['vorhand','mittelhand','du'];return o[(o.indexOf(p)+1
 // ── TACTICAL AI ──
 function aiPlay(){
   if(phase!=='playing')return;
-  var hand=hands[currentPlayer];if(hand.length===0)return;
+  if(aiPlaying)return; // prevent double play
+  if(currentPlayer==='du')return;
+  if(currentTrick.length>=3)return; // trick already full
+  aiPlaying=true;
+  var hand=hands[currentPlayer];if(hand.length===0){aiPlaying=false;return;}
   var legal=hand.filter(function(c){return isLegalPlay(c,hand,currentTrick,currentGame.type);});
   if(legal.length===0)legal=hand;
   var card=aiChooseCardTactical(currentPlayer,legal,currentTrick,currentGame.type);
@@ -1019,18 +1033,29 @@ function resolveTrick(){
   $('stich-info').textContent=wname+' gewinnt den Stich';
   $('last-stich-btn').style.display='block';
 
-  // KI Trainer: analyze this trick
+  // KI Trainer: analyze this trick with correct game context
   var duEntry=lastTrick.find(function(e){return e.player==='du';});
   if(duEntry){
-    var played=lastTrick.map(function(e){return(e.player==='du'?'Ich':e.player==='vorhand'?'Vorhand':'Mittelhand')+': '+cardName(e.card);}).join(' | ');
-    var remaining=handStr(hands.du);
-    var declarerPtsSoFar=trickPoints[declarer];
     var gt=currentGame.type;
-    var prompt='Skatspiel: '+GAME_NAMES[gt]+'. Alleinspieler: '+(declarer==='du'?'Ich':declarer==='vorhand'?'Vorhand':'Mittelhand')+'. Level: '+level+'. Dieser Stich: '+played+'. Gewinner: '+wname+'. Ich habe noch '+hands.du.length+' Karten: '+remaining+'. Alleinspieler hat bisher '+(declarer==='du'?trickPoints.du:(trickPoints.vorhand+trickPoints.mittelhand))+' Augen. War meine Karte ('+cardName(duEntry.card)+') sinnvoll? Was wäre besser gewesen und warum? Berücksichtige den '+(gt==='null'?'Null-Spielzweck (kein Stich machen)':gt==='grand'?'Grand (nur Buben sind Trumpf)':'Spielverlauf')+'.';
+    var played=lastTrick.map(function(e){return(e.player==='du'?'Ich':e.player==='vorhand'?'Vorhand':'Mittelhand')+': '+cardName(e.card);}).join(' | ');
+    var remaining=hands.du.length>0?handStr(hands.du):'keine Karten mehr';
+    var declarerPtsSoFar=trickPoints[declarer];
+    var gameDesc='';
+    if(gt==='null') gameDesc='NULLSPIEL (Ziel: keinen Stich machen! Kein Trumpf existiert.)';
+    else if(gt==='grand') gameDesc='GRAND (nur die 4 Buben sind Trumpf, keine Farbe ist Trumpf!)';
+    else gameDesc=GAME_NAMES[gt]+' ('+SUIT_SYM[gt]+' ist Trumpf + alle 4 Buben)';
+    var prompt='SKAT - '+gameDesc+
+      '. Alleinspieler: '+(declarer==='du'?'Ich':declarer==='vorhand'?'Vorhand':'Mittelhand')+
+      '. Mein Level: '+level+
+      '. Stich: '+played+
+      '. Sieger: '+wname+
+      '. Meine restlichen Karten ('+hands.du.length+'): '+remaining+
+      '. Alleinspieler-Augen bisher: '+declarerPtsSoFar+'/120'+
+      '. War meine Karte "'+cardName(duEntry.card)+'" die beste Wahl? Wenn nicht, was wäre besser und warum? Beziehe dich NUR auf das aktuelle Spiel ('+gameDesc+').';
     trainerAnalyze(prompt);
   }
 
-  currentTrick=[];currentPlayer=winner.player;
+  currentTrick=[];currentPlayer=winner.player;aiPlaying=false;
   if(hands.vorhand.length===0&&hands.mittelhand.length===0&&hands.du.length===0){setTimeout(endRound,1200);return;}
   setTimeout(function(){$('stich-info').textContent='';renderAll();if(currentPlayer!=='du')setTimeout(aiPlay,700);else setStatus('Du bist dran!');},1100);
 }
