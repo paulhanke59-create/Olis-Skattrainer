@@ -191,7 +191,7 @@ body { font-family: Georgia, serif; background: radial-gradient(ellipse at 50% 0
   <div id="level-logo">🃏</div>
   <div id="level-title">Oli's Skattrainer</div>
   <div id="level-sub">Dein persönlicher KI-Skat-Coach</div>
-  <div style="font-size:10px;color:#3a5a30;margin-bottom:20px;letter-spacing:1px">v1.5 · 14.06.2026 · 22:30</div>
+  <div style="font-size:10px;color:#3a5a30;margin-bottom:20px;letter-spacing:1px">v1.6 · 14.06.2026 · 23:10</div>
   <button class="level-btn" onclick="setLevel('anfaenger')">
     <span class="level-name">🌱 Anfänger</span>
     <span class="level-desc">Ich lerne noch. Der Trainer erklärt alles ausführlich und geduldig.</span>
@@ -221,7 +221,7 @@ body { font-family: Georgia, serif; background: radial-gradient(ellipse at 50% 0
   <div style="flex:1">
     <div id="header-title">🃏 Oli's Skattrainer</div>
     <div id="header-level"></div>
-    <div id="header-version">v1.5 · 14.06.2026 · 22:30</div>
+    <div id="header-version">v1.6 · 14.06.2026 · 23:10</div>
   </div>
   <button class="hbtn" id="sort-btn">⇄ Sort</button>
   <button class="hbtn" id="new-game-btn">↺ Neu</button>
@@ -375,7 +375,28 @@ async function callGemini(prompt, systemPrompt) {
   return data.candidates[0].content.parts[0].text.trim();
 }
 
-var TRAINER_SYSTEM = `Du bist ein erfahrener Skat-Trainer der deutsch spricht. Antworte immer auf Deutsch, präzise und in maximal 3-4 kurzen Sätzen. Keine langen Erklärungen. Direkt zum Punkt. Nutze Symbole: ✅ gut, ⚠️ Fehler, 💡 Tipp, 📊 Analyse.`;
+var TRAINER_SYSTEM = `Du bist ein erfahrener Skat-Trainer und kennst alle Skat-Regeln perfekt. Antworte immer auf Deutsch, maximal 4 kurze Sätze. Direkt zum Punkt. Nutze: ✅ gut, ⚠️ Fehler, 💡 Tipp, 📊 Analyse.
+
+WICHTIGE SKAT-REGELN DIE DU KENNST:
+- Trumpfreihenfolge Farbspiel: J♣ J♠ J♥ J♦ dann A 10 K D 9 8 7 der Trumpffarbe
+- Trumpfreihenfolge Grand: nur J♣ J♠ J♥ J♦ sind Trumpf, KEINE anderen Karten
+- Null: kein Trumpf, Ziel ist KEIN Stich zu machen, Reihenfolge 7<8<9<10<B<D<K<A
+- Matadoren: zusammenhängende Buben-Kette von J♣ an (mit oder ohne)
+- Spielwert = Grundwert × (Matadoren + Spiel + evtl. Hand/Schneider/Schwarz)
+- Grundwerte: ♣=12, ♠=11, ♥=10, ♦=9, Grand=24, Null=23
+- Handstärke: Anzahl Trümpfe, Asse in Nebenfarben, Matadoren bestimmen das Potenzial
+- Mindestens 5 Trümpfe (inkl. Buben) für ein solides Farbspiel
+- Für Grand: mindestens 3-4 Buben + starke Nebenfarben
+- Für Null: keine Asse, keine Zehnen oder nur in abgedeckten Farben
+- Reizwert muss IMMER den Spielwert erreichen oder überschreiten
+- Überreizt = doppelter Spielwert als Verlust
+
+BEWERTEKRITERIEN FÜR EINE HAND:
+1. Welche Farbe hat die meisten Trümpfe (inkl. Buben)?
+2. Wie viele Matadoren hat man?
+3. Welche Asse sichert man in Nebenfarben?
+4. Ist der berechnete Spielwert höher als der Reizwert?
+5. Lohnt sich Skat aufnehmen oder Hand spielen?`;
 
 async function trainerAnalyze(prompt) {
   try {
@@ -664,14 +685,31 @@ function startReizen(){
   reizQueue=[];reizQueueRunning=false;
   $('reiz-log').innerHTML='';
   updateInfoBar();
-  // Trainer: analyze player's hand before bidding - count exactly
+  // Trainer: analyze player's hand before bidding - full Skat context
   var myJacks=hands.du.filter(function(c){return c.rank==='B';});
   var myAces=hands.du.filter(function(c){return c.rank==='A';});
   var myTens=hands.du.filter(function(c){return c.rank==='10';});
-  var handPrompt='Meine Skathand (genau '+hands.du.length+' Karten): '+handStr(hands.du)+
-    '. Davon: '+myJacks.length+' Buben ('+myJacks.map(cardName).join(',')+'), '+
-    myAces.length+' Asse, '+myTens.length+' Zehnen. '+
-    'Erfahrungslevel: '+level+'. Was ist meine beste Spieloption? Bis wie viel sollte ich reizen? Antworte konkret auf Basis dieser exakten Karten.';
+  // Count cards per suit
+  var suitCounts={};
+  SUITS.forEach(function(s){suitCounts[s]=hands.du.filter(function(c){return c.suit===s&&c.rank!=='B';}).length;});
+  // Count trumps per potential game
+  var trumpCounts={};
+  ['kreuz','pik','herz','karo','grand'].forEach(function(gt){
+    trumpCounts[gt]=hands.du.filter(function(c){return isTrump(c,gt);}).length;
+  });
+  // Matadors
+  var matKreuz=countMatadors(hands.du,'kreuz');
+  var matPik=countMatadors(hands.du,'pik');
+  var matHerz=countMatadors(hands.du,'herz');
+  var matKaro=countMatadors(hands.du,'karo');
+  var handPrompt=
+    'Meine Skathand ('+hands.du.length+' Karten): '+handStr(hands.du)+'.\n'+
+    'Buben: '+myJacks.length+' ('+myJacks.map(cardName).join(', ')+(myJacks.length===0?'keine':'')+').\n'+
+    'Asse: '+myAces.length+(myAces.length>0?' ('+myAces.map(cardName).join(', ')+')':'')+'. Zehnen: '+myTens.length+(myTens.length>0?' ('+myTens.map(cardName).join(', ')+')':'')+'.\n'+
+    'Trümpfe je Spiel: Kreuz='+trumpCounts.kreuz+', Pik='+trumpCounts.pik+', Herz='+trumpCounts.herz+', Karo='+trumpCounts.karo+', Grand='+trumpCounts.grand+'.\n'+
+    'Matadoren: Kreuz='+matKreuz+', Pik='+matPik+', Herz='+matHerz+', Karo='+matKaro+'.\n'+
+    'Reizwert bisher: '+reizCurrentVal+'. Level: '+level+'.\n'+
+    'Welches Spiel ist optimal und bis zu welchem Reizwert sollte ich bieten? Begründe mit Spielwert-Berechnung.';
   trainerAnalyze(handPrompt);
   runAIReizPhase();
 }
